@@ -5,13 +5,20 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
+const session = require('express-session')
+const passport = require('passport')
+const mongoose = require('mongoose')
 
-const indexRouter = require('./routes/page');
-const usersRouter = require('./routes/api/users');
+const userRouter = require('./routes/user_router');
+const authRouter = require('./routes/auth_router')
+const mediaRouter = require('./routes/media_router')
+const viewRouter = require('./routes/view_router')
+const otherRouter = require('./routes/other_router')
 
 
-const db = require('./config/db')
-db.connectDB(process.env.DATABASE_URL)
+mongoose.connect(process.env.DATABASE_URL)
+  .then(() => console.log('Database Connected!'))
+  .catch((err) => console.log(err))
 
 const app = express();
 
@@ -20,53 +27,32 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(logger('dev'));
+app.use(session({ secret: 'cats', resave: true, saveUninitialized: true }))
+app.use(passport.initialize())
+app.use(passport.session())
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({
+  limit: '100mb',
+  extended: true,
+  parameterLimit: 100000
+}))
+app.use(bodyParser.json({ limit: '100mb' }))
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
 
-const multipart = require('connect-multiparty');
-const multipartMiddleware = multipart();
-const fs = require('fs');
-
-app.post('/upload', multipartMiddleware, function(req, res) {
-  console.log(req.body, req.files);
-  try {
-    fs.readFile(req.files.upload.path, function (err, data) {
-      const newPath = __dirname + '/public/images/' + req.files.upload.name;
-      fs.writeFile(newPath, data, function (err) {
-        if (err) console.log({err: err});
-        else {
-          console.log(req.files.upload.originalFilename);
-          //     imgl = '/images/req.files.upload.originalFilename';
-          //     let img = "<script>window.parent.CKEDITOR.tools.callFunction('','"+imgl+"','ok');</script>";
-          //    res.status(201).send(img);
-
-          let fileName = req.files.upload.name;
-          let url = '/images/'+fileName;
-          let msg = 'Upload successfully';
-          let funcNum = req.query.CKEditorFuncNum;
-          console.log({url,msg,funcNum});
-
-          res.status(201).send("<script>window.parent.CKEDITOR.tools.callFunction('"+funcNum+"','"+url+"','"+msg+"');</script>");
-        }
-      });
-    });
-  } catch (error) {
-    console.log(error.message);
-  }
-});
+app.use('', viewRouter)
+app.use('/user', userRouter)
+app.use('/media', mediaRouter)
+app.use('/auth', authRouter)
+app.use('/other', otherRouter)
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

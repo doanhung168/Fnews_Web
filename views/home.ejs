@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="fontawesome/fontawesome-free-6.3.0-web/css/all.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="stylesheets/home.css">
+    <title>Fnews</title>
+</head>
+
+<body>
+    <div class="position-relative w-100 h-100">
+        <!-- Nav 1 -->
+        <div class="container-fluid bg-light " style="z-index: 2;">
+            <div class="container">
+                <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                    <div class="container-fluid d-flex align-items-center">
+                        <a class="navbar-brand fw-bold" style="color: #ff6200;" href="/">FNEWS</a>
+                        <div class="d-flex justify-content-start flex-grow-1 ms-4 me-2 border-start ps-3"
+                            style="border-color: rgb(17, 17, 17);">
+                            <p id="time">Thứ 7, 13/4/2023</p>
+                            <div class="d-flex flex-grow-1 justify-content-end  me-5">
+                                <a href="#" class="text-dark"><i class="far fa-clock me-1"></i>Mới nhất</a>
+                                <a href="#" class="text-dark"><i class="fa-solid fa-location-dot me-1 ms-3"></i>Tin cơ
+                                    sở</a>
+                            </div>
+                        </div>
+                        <form class="d-flex">
+                            <div class="input-group">
+                                <div class="form">
+                                    <input id="search-input" type="search" id="form1" class="form-control"
+                                        placeholder="Tìm kiếm" />
+                                </div>
+                                <button id="search-button" type="button" class="btn btn-primary">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </form>
+                        <div class="d-flex ms-4 position-relative " style="z-index: 2;">
+                            <i class="fas fa-user mt-1"></i>
+                            <a href="/login" class="ms-2 position-relative" style="display: block;" id="username">Đăng
+                                nhập</a>
+                            <div id="info-popup" class="d-flex flex-column"
+                                style="position: absolute; left: 0; top: 110%;z-index: 2;background: #fff; width: 200px; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); visibility: hidden;">
+                                <a href="/profile" class="my-2 px-2">Cá nhân</a>
+                                <a style="cursor: pointer;" id="logout" class="my-2 px-2">Đăng xuất</a>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <!-- Nav 2 -->
+        <div class="container-fluid bg-light sticky-top" style="z-index: 1;">
+            <div class="container bg-light h-50 pt-3 pb-3 align-content-center sticky-top" style="z-index: 1;">
+                <ul class="d-flex">
+                    <li>
+                        <a href="">Tiêu điểm</a>
+                    </li>
+                    <li>
+                        <a href="">Cuộc thi</a>
+                    </li>
+                    <li>
+                        <a href="">Tuyển sinh</a>
+                    </li>
+                    <li>
+                        <a href="">Thể thao</a>
+                    </li>
+                    <li>
+                        <a href="">Giao lưu</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!-- Content -->
+        <div class="container d-flex flex-column mt-4 ps-0 pe-0">
+            <!-- News -->
+            <div class="d-flex pt-4 border-top" style="width: 100%; border-color: #232323;">
+                <!-- Left -->
+                <div class="d-flex m-0 pe-4 flex-column border-end" style="width: 75%; border-color: #232323;">
+                    <a href="#" class="d-flex bg-light mb-4" style="width: 100%;">
+                        <div style="width: 65%;">
+                            <img style="object-fit: cover;" height="320px" width="100%"
+                                src="https://scontent.fhan5-8.fna.fbcdn.net/v/t39.30808-6/323327705_497918285560016_2050498955984459960_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=174925&_nc_ohc=CHWU-OwZDtcAX_e782P&_nc_ht=scontent.fhan5-8.fna&oh=00_AfCSZ_fvm217GEHcG0o5lP4LdqVZXlSnA9HAVZEp86nGgQ&oe=643608C9" />
+                        </div>
+                        <div style="width: 35%;" class="d-flex flex-column">
+                            <p class="ms-3 me-3 mt-2 fw-bold fs-4 text"
+                                style="font-family: 'Times New Roman', Times, serif; -webkit-line-clamp: 3; line-clamp: 3;">
+                                Nhiều xe chạy vào cao tốc đang thi công
+                            </p>
+                            <p class="ms-3 me-3 mt-3 fs-6" style="-webkit-line-clamp: 5; line-clamp: 5;">
+                                Cao tốc Vĩnh Hảo - Phan Thiết - Dầu Giây chưa đưa vào sử dụng, song nhiều ôtô vẫn chạy
+                                vào, đã xảy ra tai nạn chết người.
+                            </p>
+                            <div class="d-flex flex-row ms-3 align-items-center mt-3 me-3 ">
+                                <p>3h trước</p>
+                                <p class="ms-3 fs-6 fw-lighter"><i class="fa-regular fa-comment"></i><span
+                                        class="ms-2">109</span></p>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="d-flex flex-grow-1 flex-nowrap pt-4 mb-4 border-top" style="border-color: #232323;">
+                        <a href="#" class="flex-row flex-column me-4">
+                            <img style="object-fit: cover;" width="100%" height="150px"
+                                src="https://scontent.fhan5-8.fna.fbcdn.net/v/t39.30808-6/323327705_497918285560016_2050498955984459960_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=174925&_nc_ohc=CHWU-OwZDtcAX_e782P&_nc_ht=scontent.fhan5-8.fna&oh=00_AfCSZ_fvm217GEHcG0o5lP4LdqVZXlSnA9HAVZEp86nGgQ&oe=643608C9">
+                            <p class="me-3 mt-2 fw-bold fs-5 text"
+                                style="font-family: 'Times New Roman', Times, serif; -webkit-line-clamp: 3; line-clamp: 3;">
+                                Nhiều xe chạy vào cao tốc đang thi công
+                            </p>
+                            <p class="fs-6 fw-lighter"><i class="fa-regular fa-comment"></i><span
+                                    class="ms-2">109</span></p>
+                        </a>
+                        <a href="#" class="flex-row flex-column me-4">
+                            <img style="object-fit: cover;" width="100%" height="150px"
+                                src="https://scontent.fhan5-8.fna.fbcdn.net/v/t39.30808-6/323327705_497918285560016_2050498955984459960_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=174925&_nc_ohc=CHWU-OwZDtcAX_e782P&_nc_ht=scontent.fhan5-8.fna&oh=00_AfCSZ_fvm217GEHcG0o5lP4LdqVZXlSnA9HAVZEp86nGgQ&oe=643608C9">
+                            <p class="me-3 mt-2 fw-bold fs-5 text"
+                                style="font-family: 'Times New Roman', Times, serif; -webkit-line-clamp: 3; line-clamp: 3;">
+                                Nhiều xe chạy vào cao tốc đang thi công
+                            </p>
+                            <p class="fs-6 fw-lighter"><i class="fa-regular fa-comment"></i><span
+                                    class="ms-2">109</span></p>
+                        </a>
+                        <a href="#" class="flex-row flex-column">
+                            <img style="object-fit: cover;" width="100%" height="150px"
+                                src="https://scontent.fhan5-8.fna.fbcdn.net/v/t39.30808-6/323327705_497918285560016_2050498955984459960_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=174925&_nc_ohc=CHWU-OwZDtcAX_e782P&_nc_ht=scontent.fhan5-8.fna&oh=00_AfCSZ_fvm217GEHcG0o5lP4LdqVZXlSnA9HAVZEp86nGgQ&oe=643608C9">
+                            <p class="me-3 mt-2 fw-bold fs-5 text"
+                                style="font-family: 'Times New Roman', Times, serif; -webkit-line-clamp: 3; line-clamp: 3;">
+                                Nhiều xe chạy vào cao tốc đang thi công
+                            </p>
+                            <p class="fs-6 fw-lighter"><i class="fa-regular fa-comment"></i><span
+                                    class="ms-2">109</span></p>
+                        </a>
+                    </div>
+                    <div class="d-flex flex-column m-0 p-0 pt-5 border-top" style="border-color: #232323;">
+                        <% for (var i=0; i <=10; i++) { %>
+
+                            <% if(i===0) { %>
+                                <a href="#" class="d-flex mb-4" style="width: 100%;">
+                                    <div style="width: 30%;">
+                                        <img style="object-fit: cover;" height="150px" width="100%"
+                                            src="https://scontent.fhan5-8.fna.fbcdn.net/v/t39.30808-6/323327705_497918285560016_2050498955984459960_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=174925&_nc_ohc=CHWU-OwZDtcAX_e782P&_nc_ht=scontent.fhan5-8.fna&oh=00_AfCSZ_fvm217GEHcG0o5lP4LdqVZXlSnA9HAVZEp86nGgQ&oe=643608C9" />
+                                    </div>
+                                    <div style="width: 70%;" class="d-flex flex-column">
+                                        <p class="ms-3 me-3 fw-bold fs-5 text"
+                                            style="font-family: 'Times New Roman', Times, serif; -webkit-line-clamp: 3; line-clamp: 3;">
+                                            Nhiều xe chạy vào cao tốc đang thi công
+                                        </p>
+                                        <p class="ms-3 me-3 mt-1 fs-6" style="-webkit-line-clamp: 5; line-clamp: 5;">
+                                            Cao tốc Vĩnh Hảo - Phan Thiết - Dầu Giây chưa đưa vào sử dụng, song nhiều
+                                            ôtô vẫn chạy vào, đã xảy ra tai nạn chết người.
+                                        </p>
+                                        <div class="d-flex flex-row ms-3 align-items-center mt-2 me-3 ">
+                                            <p>3h trước</p>
+                                            <p class="ms-3 fs-6 fw-lighter"><i class="fa-regular fa-comment"></i><span
+                                                    class="ms-2">109</span></p>
+                                        </div>
+                                    </div>
+                                </a>
+                                <% } else {%>
+                                    <a href="#" class="d-flex mb-4 pt-4 border-top"
+                                        style="width: 100%; border-color: #232323;">
+                                        <div style="width: 30%;">
+                                            <img style="object-fit: cover;" height="150px" width="100%"
+                                                src="https://scontent.fhan5-8.fna.fbcdn.net/v/t39.30808-6/323327705_497918285560016_2050498955984459960_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=174925&_nc_ohc=CHWU-OwZDtcAX_e782P&_nc_ht=scontent.fhan5-8.fna&oh=00_AfCSZ_fvm217GEHcG0o5lP4LdqVZXlSnA9HAVZEp86nGgQ&oe=643608C9" />
+                                        </div>
+                                        <div style="width: 70%;" class="d-flex flex-column">
+                                            <p class="ms-3 me-3 fw-bold fs-5 text"
+                                                style="font-family: 'Times New Roman', Times, serif; -webkit-line-clamp: 3; line-clamp: 3;">
+                                                Nhiều xe chạy vào cao tốc đang thi công
+                                            </p>
+                                            <p class="ms-3 me-3 mt-1 fs-6"
+                                                style="-webkit-line-clamp: 5; line-clamp: 5;">
+                                                Cao tốc Vĩnh Hảo - Phan Thiết - Dầu Giây chưa đưa vào sử dụng, song
+                                                nhiều ôtô vẫn chạy vào, đã xảy ra tai nạn chết người.
+                                            </p>
+                                            <div class="d-flex flex-row ms-3 align-items-center mt-2 me-3 ">
+                                                <p>3h trước</p>
+                                                <p class="ms-3 fs-6 fw-lighter"><i
+                                                        class="fa-regular fa-comment"></i><span class="ms-2">109</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <% } %>
+
+                                        <% } %>
+
+
+
+                    </div>
+
+
+
+                </div>
+                <!-- Right -->
+                <div style="width: 25%;" class="ps-3">
+                    <div class="border d-flex flex-column" style="border-color: #232323; width: 100%;">
+                        <a href="#" class="fs-5 m-3 mb-4 fw-bolder"
+                            style="font-family: 'Times New Roman', Times, serif; text-decoration: underline; color: rgb(255, 77, 0);">XEM
+                            NHIỀU NHẤT</a>
+                        <% for(var i=0; i < 3; i++) { %>
+                            <a href="#" class="d-flex pt-2 mb-3 ms-2 me-2" style="width: 100%;">
+                                <div style="width: 45%;">
+                                    <img style="object-fit: cover;" height="80px" width="100%"
+                                        src="https://scontent.fhan5-8.fna.fbcdn.net/v/t39.30808-6/323327705_497918285560016_2050498955984459960_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=174925&_nc_ohc=CHWU-OwZDtcAX_e782P&_nc_ht=scontent.fhan5-8.fna&oh=00_AfCSZ_fvm217GEHcG0o5lP4LdqVZXlSnA9HAVZEp86nGgQ&oe=643608C9" />
+                                </div>
+                                <div style="width: 55%;" class="d-flex flex-column">
+                                    <p class="ms-2 fw-normal text"
+                                        style="font-family: 'Times New Roman', Times, serif; -webkit-line-clamp: 3; line-clamp: 3;">
+                                        Nhiều xe chạy vào cao tốc đang thi công
+                                    </p>
+                                </div>
+                            </a>
+                            <% } %>
+
+                                <a href="#" class="bg-light text-center p-2 ms-2 me-2 mb-4">Xem Thêm</a>
+
+                    </div>
+                    <div class="d-flex">
+
+                    </div>
+                </div>
+            </div>
+            <!-- Video -->
+            <div class="d-flex flex-column mt-5 pt-2 w-100">
+                <!-- Title -->
+                <div class="d-flex align-items-center justify-content-between border-bottom"
+                    style="border-color: #232323;">
+                    <a class="fs-5 fw-bolder"
+                        style="font-family: 'Times New Roman', Times, serif; color: rgb(255, 77, 0);">VIDEO</a>
+                    <a href="#">Xem thêm(<span>11</span> video)</a>
+                </div>
+                <!-- Above -->
+                <div class="d-flex">
+                    <div class="d-flex mt-4" style="width: 50%; height: 350px; position: relative;">
+                        <img style="object-fit: cover; position: absolute;" width="100%" height="100%"
+                            src="https://scontent.fhan5-8.fna.fbcdn.net/v/t39.30808-6/323327705_497918285560016_2050498955984459960_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=174925&_nc_ohc=CHWU-OwZDtcAX_e782P&_nc_ht=scontent.fhan5-8.fna&oh=00_AfCSZ_fvm217GEHcG0o5lP4LdqVZXlSnA9HAVZEp86nGgQ&oe=643608C9">
+                        <i class="fa-solid fa-play"
+                            style="position: absolute; bottom: 25px; left: 20px; color: #fff;"></i>
+                        <p class="fs-5 text"
+                            style="position: absolute; bottom: 20px; left: 50px; color: #fff;-webkit-line-clamp: 1; line-clamp: 1;">
+                            Nhiều xe chạy vào cao tốc đang thi công</p>
+                    </div>
+                    <div class="d-flex w-50 ms-4 ">
+                        <div class="d-flex w-50 flex-column pt-4">
+                            <img style="object-fit: cover;" height="150px" width="100%"
+                                src="https://scontent.fhan5-8.fna.fbcdn.net/v/t39.30808-6/323327705_497918285560016_2050498955984459960_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=174925&_nc_ohc=CHWU-OwZDtcAX_e782P&_nc_ht=scontent.fhan5-8.fna&oh=00_AfCSZ_fvm217GEHcG0o5lP4LdqVZXlSnA9HAVZEp86nGgQ&oe=643608C9" />
+                            <p class="fw-bolder fs-5 text mt-2"
+                                style="font-family: 'Times New Roman', Times, serif; -webkit-line-clamp: 2; line-clamp: 2;">
+                                Nhiều xe chạy vào cao tốc đang thi công
+                            </p>
+                            <p class="me-3 mt-2 text"
+                                style="-webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; text-overflow: ellipsis;">
+                                Cao tốc Vĩnh Hảo - Phan Thiết - Dầu Giây chưa đưa vào sử dụng, song nhiều ôtô vẫn chạy
+                                vào, đã xảy ra tai nạn chết người.
+                            </p>
+                            <p class="mt-2"><i class="far fa-clock"></i><span class="ms-2">6:15 phút</span></p>
+                        </div>
+                        <div class="d-flex w-50 flex-column pt-4 ms-4">
+                            <img style="object-fit: cover;" height="150px" width="100%"
+                                src="https://scontent.fhan5-8.fna.fbcdn.net/v/t39.30808-6/323327705_497918285560016_2050498955984459960_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=174925&_nc_ohc=CHWU-OwZDtcAX_e782P&_nc_ht=scontent.fhan5-8.fna&oh=00_AfCSZ_fvm217GEHcG0o5lP4LdqVZXlSnA9HAVZEp86nGgQ&oe=643608C9" />
+                            <p class="fw-bolder fs-5 text mt-2"
+                                style="font-family: 'Times New Roman', Times, serif; -webkit-line-clamp: 2; line-clamp: 2;">
+                                Nhiều xe chạy vào cao tốc đang thi công
+                            </p>
+                            <p class="me-3 mt-2 text" style="-webkit-line-clamp: 3; line-clamp: 3;">
+                                Cao tốc Vĩnh Hảo - Phan Thiết - Dầu Giây chưa đưa vào sử dụng, song nhiều ôtô vẫn chạy
+                                vào, đã xảy ra tai nạn chết người.
+                            </p>
+                            <p class="mt-2"><i class="far fa-clock"></i><span class="ms-2">6:15 phút</span></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Below -->
+                <div class="d-flex mt-4 pt-4 border-top" style="border-color: #232323;">
+                    <% for(var i=0; i < 4; i++) { %>
+                        <%if(i==0) {%>
+                            <div class="d-flex w-50 flex-column">
+                                <img style="object-fit: cover;" height="150px" width="100%"
+                                    src="https://scontent.fhan5-8.fna.fbcdn.net/v/t39.30808-6/323327705_497918285560016_2050498955984459960_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=174925&_nc_ohc=CHWU-OwZDtcAX_e782P&_nc_ht=scontent.fhan5-8.fna&oh=00_AfCSZ_fvm217GEHcG0o5lP4LdqVZXlSnA9HAVZEp86nGgQ&oe=643608C9" />
+                                <p class="fw-bolder fs-5 text mt-2"
+                                    style="font-family: 'Times New Roman', Times, serif; -webkit-line-clamp: 2; line-clamp: 2;">
+                                    Nhiều xe chạy vào cao tốc đang thi công
+                                </p>
+                                <p class="mt-2"><i class="far fa-clock"></i><span class="ms-2">6:15 phút</span></p>
+                            </div>
+                            <% } else {%>
+                                <div class="d-flex w-50 flex-column ms-4">
+                                    <img style="object-fit: cover;" height="150px" width="100%"
+                                        src="https://scontent.fhan5-8.fna.fbcdn.net/v/t39.30808-6/323327705_497918285560016_2050498955984459960_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=174925&_nc_ohc=CHWU-OwZDtcAX_e782P&_nc_ht=scontent.fhan5-8.fna&oh=00_AfCSZ_fvm217GEHcG0o5lP4LdqVZXlSnA9HAVZEp86nGgQ&oe=643608C9" />
+                                    <p class="fw-bolder fs-5 text mt-2"
+                                        style="font-family: 'Times New Roman', Times, serif; -webkit-line-clamp: 2; line-clamp: 2;">
+                                        Nhiều xe chạy vào cao tốc đang thi công
+                                    </p>
+                                    <p class="mt-2"><i class="far fa-clock"></i><span class="ms-2">6:15 phút</span></p>
+                                </div>
+                                <% } %>
+                                    <% } %>
+                </div>
+            </div>
+            <!-- Paging -->
+            <div class="d-flex justify-content-center mt-2 mb-2 pt-4">
+                <a href="#" class="ps-3 pe-3 pt-2 pb-2 ms-3 border bg-info text-white"
+                    style="border-color: #232323;">1</a>
+                <a href="#" class="ps-3 pe-3 pt-2 pb-2 ms-3 border bg-info text-white"
+                    style="border-color: #232323;">2</a>
+                <a href="#" class="ps-3 pe-3 pt-2 pb-2 ms-3 border bg-info text-white"
+                    style="border-color: #232323;">3</a>
+                <a href="#" class="ps-3 pe-3 pt-2 pb-2 ms-3 border bg-info text-white"
+                    style="border-color: #232323;">4</a>
+                <a href="#" class="ps-3 pe-3 pt-2 pb-2 ms-3 border bg-info text-white"
+                    style="border-color: #232323;">5</a>
+                <a href="#" class="ps-3 pe-3 pt-2 pb-2 ms-3 border bg-info text-white"
+                    style="border-color: #232323;">6</a>
+            </div>
+            <!-- Footer -->
+            <div class="d-flex flex-column mt-4 mb-4">
+                <div class="w-100" style="height: 10px; background: #ececec;"></div>
+                <div class="d-flex justify-content-between mt-4">
+                    <div class="d-flex flex-column">
+                        <a class="fw-bolder mb-1" href="#">Trang chủ</a>
+                        <a class="fw-bolder mb-1" href="#">Video</a>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <a class="fw-bolder mb-1" href="#">Mới nhất</a>
+                        <a class="fw-bolder mb-1" href="#">Xem nhiều</a>
+                        <a class="fw-bolder mb-1" href="#">Tin nóng</a>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <a class="fw-bolder mb-1" href="#">Tiêu điểm</a>
+                        <a class="fw-bolder mb-1" href="#">Hoạt động</a>
+                        <a class="fw-bolder mb-1" href="#">Cuộc thi</a>
+                        <a class="fw-bolder mb-1" href="#">Tuyển sinh</a>
+                        <a class="fw-bolder mb-1" href="#">Thể thao</a>
+                        <a class="fw-bolder mb-1" href="#">Giao lưu</a>
+                    </div>
+                    <div class="d-flex flex-column w-25">
+                        <p>Tải ứng dụng</p>
+                        <a href="#" class="p-1 mt-2 mb-2"><i class="fa-solid fa-mobile me-2"></i>Fnews</a>
+                        <p>Liên hệ chúng tôi</p>
+                        <a href="#" class="p-1 mt-2 mb-2"><i class="fas fa-envelope me-2"></i>Tòa soạn</a>
+                        <a href="#" class="p-1 mt-2 mb-2"><i class="fas fa-ad me-2"></i>Liên hệ quảng cáo</a>
+                        <p>Đường dây nóng</p>
+                        <p href="#" class="p-1 mt-2 mb-2"><i class="fas fa-phone me-2"></i>1900 8282</p>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center border-top mt-2 pt-2 pb-2"
+                    style="border-color: #232323;">
+                    <p>Báo điện tử:
+                        <a class="navbar-brand fw-bold fs-6 m-0 p-0" style="color: rgb(254, 80, 6);" href="/"><span
+                                class="navbar-brand fw-bold fs-4 m-0" style="color: rgb(254, 80, 6);">F</span>NEWS</a>
+                    </p>
+                    <p>Theo dõi chúng tôi trên: <i class="fa-brands fa-facebook ms-2 me-2"
+                            style="color: #1842ff;"></i> <i class="fa-brands fa-youtube" style="color: red;"></i></p>
+                </div>
+                <div class="d-flex flex-row justify-content-between border-top pt-3" style="border-color: #232323;">
+                    <div class="d-flex flex-column">
+                        <p>Tổng biên tập: Phạm Hiếu</p>
+                        <p>Địa chỉ: Tầng 10, Tòa A FPT Tower, số 10 Phạm Văn Bạch, Dịch Vọng, Cầu Giấy, Hà Nội</p>
+                        <p>Điện thoại: 024 7300 8899 - máy lẻ 4500</p>
+                    </div>
+                    <p>© 1997-2023. Toàn bộ bản quyền thuộc Fnews</p>
+                </div>
+            </div>
+
+        </div>
+        <!-- up arow -->
+        <a href="#" class="position-fixed p-2 border border-1 border-success"
+            style="bottom: 30px; right: 30px; border-radius: 10%;">
+            <i class="fa-solid fa-circle-up fa-square-up" style="color: green;"></i>
+        </a>
+
+    </div>
+
+    <script src="javascripts/home.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>

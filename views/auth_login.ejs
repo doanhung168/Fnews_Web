@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <link rel="stylesheet" href="fontawesome/fontawesome-free-6.3.0-web/css/all.min.css">
+  <link rel="stylesheet" href="stylesheets/login.css">
+  <title>Đăng nhập</title>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+        <div class="card border-0 shadow rounded-3 my-5">
+          <div class="card-body p-4 p-sm-5">
+            <h5 class="card-title text-center mb-5 fw-light fs-5">ĐĂNG NHẬP</h5>
+            <form onsubmit="return false">
+              <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="username" required pattern=".{6,}"
+                  title="Tên đăng nhập từ 6 ký tự trở lên" value="hung1234">
+                <label for="username">Tên đăng nhập</label>
+              </div>
+              <div class="form-floating mb-3 wrap-input">
+                <input type="password" class="form-control" id="password" required maxlength="30"
+                  pattern="^(?=.*\d)(?=.*[A-Z])(?=.*[!@#&]).{8,30}$"
+                  title="Mật khẩu từ 8 ký tự trở lên, có ít nhật một ký tự chữ, số và ký tự đặc biệt(!@#&)"
+                  value="Hung1234@">
+                <label for="password">Mật khẩu</label>
+                <i class="fa-solid fa-eye-slash eye-pass"></i>
+              </div>
+
+              <div class="d-grid">
+                <button class="btn btn-primary btn-login text-uppercase fw-bold" id="login">ĐĂNG NHẬP</button>
+              </div>
+              <a href="/forgot-password" class="d-grid py-2" style="color: black; text-decoration: underline;">Quên mật khẩu?</a>
+              <p id="err" style="color: red;"></p>
+              <hr class="my-4">
+              <div class="d-grid mt-3">
+                <a href="auth/google-login" class="btn btn-google btn-login text-uppercase fw-bold" id="login-with-gg">
+                  <i class="fab fa-google me-2"></i> Đăng nhập với Google
+                </a>
+              </div>
+              <div class="d-grid mt-3">
+                <a href="auth/facebook-login" class="btn btn-facebook btn-login text-uppercase fw-bold" id="login-with-fb">
+                  <i class="fab fa-facebook-f me-2"></i> Đăng nhập với Facebook
+                </a>
+              </div>
+              <div class="d-grid mt-3">
+                <a href="/register" class="btn btn-login text-uppercase text-white fw-bold"
+                  style="background-color: #02c396;">
+                  Đăng ký một tài khoản mới
+                </a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="javascripts/login.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>
