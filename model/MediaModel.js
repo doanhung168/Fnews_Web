@@ -8,7 +8,7 @@ const MediaSchema = new Schema({
     field: String,
     content: String,
     comment: [{type: Schema.Types.ObjectId, ref: 'Comment'}],
-    time: {type: Date, default: new Date().getTime()},
+    time: {type: Number, default: Date.now },
     state: {type: Number, default: 1}, // 1.pending, 2.approved, 3.reject
     active: {type: Boolean, default: true},
     tags: [String],
