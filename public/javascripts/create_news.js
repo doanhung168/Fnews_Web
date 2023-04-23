@@ -144,21 +144,27 @@ CKEDITOR.ClassicEditor.create(document.getElementById("content"), {
     console.error(error);
 });
 
-$('#news').click(() => {
-    $('#news').css('color', '#ff6200')
-    $('#video').css('color', '#fff')
-    $('#news-box').css('display', 'flex')
-    $('#news-box').css('flex-direction', 'column')
-    $('#video-box').css('display', 'none')
-})
 
-$('#video').click(() => {
-    $('#news').css('color', '#fff')
-    $('#video').css('color', '#ff6200')
-    $('#news-box').css('display', 'none')
-    $('#video-box').css('display', 'flex')
-    $('#video-box').css('flex-direction', 'column')
-})
+function loadField() {
+    $.ajax({
+        url: '/field/',
+        dataType: 'json',
+        type: 'GET',
+        success: function (data) {
+            if (data.success) {
+                $('#field').empty()
+                data.data.forEach(element => {
+                    if(element.active) {
+                        $('#field').append(`<option value="${element._id}">${element.value}</option>`)
+                    }
+                })
+            }
+        },
+    });
+}
+
+loadField()
+
 
 function create_ajax(url) {
     var fd = new FormData($("form").get(0));
@@ -183,6 +189,8 @@ function create_ajax(url) {
     event.preventDefault();
 }
 
+
+
 $('#avatar').click(() => {
     $('#file').click()
 })
@@ -201,15 +209,38 @@ function getCookie(name) {
     return match ? match[1] : null;
 }
 
+async function uploadVideoInNews(videoUrl, linkedNews, title) {
+    console.log(videoUrl + " " + linkedNews + " " + title)
+    $.ajax({
+        url: '/video/',
+        beforeSend: function (request) {
+            console.log("Bearer " + getCookie("Authorization"))
+            request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
+        },
+        data: { content: videoUrl, linkedNews: linkedNews, title: title },
+        dataType: 'json',
+        type: 'POST',
+        success: function (data) {
+            if (data.success) {
+                console.log('upload video success ' + data.data.id)
+            } else {
+                console.log(data.message)
+            }
+        },
+        error: function (xhr, status, error) {
+            console.log('Error: ' + error.message);
+        }
+    });
+}
+
 $('#add-news').click(() => {
+
     const content = editor.getData()
     const title = $('#title').val()
     const avatar = $('#avatar').attr('src')
     const field = $('#field').val()
     const tag = $('#tag').val()
     const tags = tag.split(' ')
-
-    console.log(content)
 
     if (avatar === '/images/add_image_placeholder.png') {
         $('#inform').css('color', 'red')
@@ -218,7 +249,7 @@ $('#add-news').click(() => {
     }
 
     $.ajax({
-        url: '/media/',
+        url: '/news/',
         beforeSend: function (request) {
             console.log("Bearer " + getCookie("Authorization"))
             request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
@@ -226,9 +257,14 @@ $('#add-news').click(() => {
         data: { content, title, avatar, field, tags, type: 'news', state: 1 },
         dataType: 'json',
         type: 'POST',
-        success: function (data) {
+        success: async function (data) {
             if (data.success) {
                 $('#modalCenter').modal('show');
+                const parser = new DOMParser()
+                const dom = parser.parseFromString(content, "text/html")
+                dom.querySelectorAll('oembed[url]').forEach(async (element) => {
+                    await uploadVideoInNews(element.attributes.url.value, data.data.id, data.data.title)
+                });
             } else {
                 $('#inform').css('color', 'red')
                 $('#inform').text(data.message)
@@ -242,99 +278,5 @@ $('#add-news').click(() => {
 })
 
 
-function create_ajax_upload_video_cover_img(url) {
-    var fd = new FormData($("form").get(2));
-    $.ajax({
-        url: url,
-        data: fd,
-        dataType: 'json',
-        type: 'POST',
-        processData: false,
-        contentType: false,
-        success: function (data) {
-            if (data.success) {
-                $('#video-cover-image').attr('src', data.data.imageUrl)
-            } else {
-                console.log(data.message)
-            }
-        },
-        error: function (xhr, status, error) {
-            console.log('Error: ' + error.message);
-        }
-    });
-    event.preventDefault();
-}
 
-$('#video-cover-image').click(() => {
-    $('#video-coverd-image-file').click()
-})
-
-$('#video-coverd-image-file').on('change', (event) => {
-    $('#upload-video-button').click()
-})
-
-$('#upload-video-button').click(function (e) {
-    create_ajax_upload_video_cover_img('/other/upload-image')
-})
-
-$('#add-video').click(() => {
-    alert('234')
-
-    const avatar = $('#video-cover-image').attr('src')
-    if (avatar === '/images/add_image_placeholder.png') {
-        $('#inform2').css('color', 'red')
-        $('#inform2').text('Vui lòng chọn ảnh bìa cho bài viết')
-        return
-    }
-
-    var fd = new FormData($("form").get(1));
-    $.ajax({
-        url: 'other/upload-video',
-        data: fd,
-        dataType: 'json',
-        type: 'POST',
-        processData: false,
-        contentType: false,
-        success: function (data) {
-            if (data.success) {
-                console.log(data.data.videoName + ' - ' + data.data.videoUrl)
-                const content = data.data.videoUrl
-                const title = $('#video-title').val()
-                const avatar = $('#video-cover-image').attr('src')
-                const field = $('#video-field').val()
-                const tag = $('#video-tag').val()
-                const tags = tag.split(' ')
-
-                $.ajax({
-                    url: '/media/',
-                    beforeSend: function (request) {
-                        console.log("Bearer " + getCookie("Authorization"))
-                        request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
-                    },
-                    data: { content, title, avatar, field, tags, type: 'video', state: 1 },
-                    dataType: 'json',
-                    type: 'POST',
-                    success: function (data) {
-                        if (data.success) {
-                            $('#modalCenter').modal('show');
-                        } else {
-                            $('#inform2').css('color', 'red')
-                            $('#inform2').text(data.message)
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        console.log('Error: ' + error.message);
-                    }
-                });
-
-            } else {
-                console.log(data.message)
-            }
-        },
-        error: function (xhr, status, error) {
-            console.log('Error: ' + error.message);
-        }
-    });
-    event.preventDefault();
-})
 

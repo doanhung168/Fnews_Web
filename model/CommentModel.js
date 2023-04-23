@@ -6,9 +6,9 @@ const CommentSchema = new Schema({
     owner: Schema.Types.ObjectId,
     root: Schema.Types.ObjectId,
     rootType: String,
-    time: Date,
+    time: Number,
     state: String
 })
 
-const Comment = mongoose.model('Media', CommentSchema)
+const Comment = mongoose.model('Comment', CommentSchema)
 module.exports = Comment

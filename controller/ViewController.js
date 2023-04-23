@@ -45,8 +45,12 @@ const ViewController = {
         res.render('my_notification')
     },
 
-    compCreateNews: (req, res) => {
-        res.render('comp_create_news')
+    createNews: (req, res) => {
+        res.render('news_create')
+    },
+
+    fieldManagement: (req, res) => {
+        res.render('field_management')
     }
 
 }

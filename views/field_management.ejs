@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="fontawesome/fontawesome-free-6.3.0-web/css/all.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="/stylesheets/base.css">
+    <title>Trang cá nhân</title>
+</head>
+
+<body style="overflow: hidden;">
+    <div class="d-flex flex-column">
+        <div class="d-flex" style="height: 45px;">
+            <div class="col-2 d-flex px-3 align-items-center fs-5" style="background-color: rgb(41, 41, 41);">
+                <a class="navbar-brand fw-bold" style="color: #ff6200;" href="/">FNEWS</a>
+            </div>
+            <div class="col-9 p-0 d-flex" style="background-color: rgb(72, 72, 72);"></div>
+            <div class="col-1 d-flex justify-content-center align-items-center"
+                style="background-color: rgb(41, 41, 41);">
+                <p style="color: #ffffff;cursor: pointer;">Đăng xuất</p>
+            </div>
+        </div>
+        <div class="flex-grow-1 d-flex flex-row">
+            <div class="col-2 bg-light h-100 d-flex flex-column pt-3" style="min-height: 750px;">
+                <a href="/profile" class="d-flex align-items-center px-3 py-2">
+                    <i class="fa-regular fa-user"></i>
+                    <p class="ps-2 fw-bolder">Thông tin tài khoản</p>
+                </a>
+                <a href="/my-news" style="color: #ff6200;" class="d-flex align-items-center px-3 py-2">
+                    <i class="fa-solid fa-newspaper"></i>
+                    <p class="ps-2 fw-bolder">Bài viết của tôi</p>
+                </a>
+                <a href="#" class="d-flex align-items-center px-3 py-2">
+                    <i class="fa-solid fa-comment"></i>
+                    <p class="ps-2 fw-bolder">Ý kiến của tôi</p>
+                </a>
+                <a href="#" class="d-flex align-items-center px-3 py-2">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    <p class="ps-2 fw-bolder">Tin đã lưu</p>
+                </a>
+                <a href="#" class="d-flex align-items-center px-3 py-2">
+                    <i class="fa-solid fa-bell"></i>
+                    <p class="ps-2 fw-bolder">Trình thông báo</p>
+                </a>
+
+                <div class="m-0 p-0" id="forAdmin">
+                    <p class="mt-4 mb-0 border-top mx-2 p-2" style="border-color: #cdcdcd;">Admin</p>
+                    <a href="/field-management" class="d-flex align-items-center px-3 py-2">
+                        <p class="fw-bolder">Chủ đề</p>
+                    </a>
+                    <a href="#" class="d-flex align-items-center px-3 py-2">
+                        <p class="fw-bolder" href="#">Bài viết</p>
+                    </a>
+                    <a href="#" class="d-flex align-items-center px-3 py-2">
+                        <p class="fw-bolder" href="#">Video</p>
+                    </a>
+                    <a href="#" class="d-flex align-items-center px-3 py-2">
+                        <p class="fw-bolder" href="#">Bình luận</p>
+                    </a>
+                    <a href="#" class="d-flex align-items-center px-3 py-2">
+                        <p class="fw-bolder" href="#">Người dùng</p>
+                    </a>
+                </div>
+            </div>
+            <div class="col-10 d-flex flex-column" style="overflow: auto; height: 750px;">
+                <div class="d-flex flex-column px-5 py-3 ms-3 justify-content-start">
+                    <a class="btn" id="create-field-btn"
+                        style="background-color: #ff6200; color: #ffffff; width: 200px;">Tạo
+                        chủ đề</a>
+                    <form class="mt-3 d-none" id="add-field-form" onsubmit="return false">
+                        <div class="mb-4 mt-0">
+                            <label for="content" class="form-label fw-bold">Tên chủ đề</label>
+                            <input class="form-control" id="value" required></input>
+                        </div>
+                        <div class="mb-4">
+                            <label for="title" class="form-label fw-bold">Mô tả chủ đề</label>
+                            <input class="form-control" id="des" required></input>
+                        </div>
+                        <div class="mb-4 mt-4">
+                            <button id="add-field" class="btn" style="background-color: #ff6200; color: white;">Tạo
+                                chủ đề</button>
+                        </div>
+                        <p id="create-inform" class="my-3"></p>
+                    </form>
+                </div>
+                <div class="px-5 py-2" id="field-list">
+
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalCenter" tabindex="-1" role="dialog" aria-labelledby="emodalCenterTitle"
+            data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="emodalCenterTitle">Sửa chủ đề</h5>
+                    </div>
+                    <div class="modal-body text-success">
+                        <form onsubmit="return false">
+                            <input type="hidden" id="edit-field-id">
+                            <p class="mb-3" id="edit-field-value"></p>
+                            <div class="mb-4 mt-0">
+                                <label for="content" class="form-label fw-bold">Tên chủ đề</label>
+                                <input class="form-control" id="edit-field-new-value" required></input>
+                            </div>
+                            <div class="mb-4">
+                                <label for="title" class="form-label fw-bold">Mô tả chủ đề</label>
+                                <input class="form-control" id="edit-field-des" required></input>
+                            </div>
+                            <div class="mb-4 mt-4">
+                                <button id="edit-field" class="btn"
+                                    style="background-color: #ff6200; color: white;">Sửa
+                                    chủ đề</button>
+                            </div>
+                            <p id="edit-inform" class="my-3"></p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <script>
+        function getCookie(name) {
+            function escape(s) { return s.replace(/([.*+?\^$(){}|\[\]\/\\])/g, '\\$1'); }
+            var match = document.cookie.match(RegExp('(?:^|;\\s*)' + escape(name) + '=([^;]*)'));
+            return match ? match[1] : null;
+        }
+
+        function createField() {
+            const value = $('#value').val()
+            const description = $('#des').val()
+
+            if (value === "") {
+                $('#create-inform').css('color', 'red')
+                $('#create-inform').text("Thiếu tên chủ đề")
+                return
+            }
+
+            if (description === "") {
+                $('#create-inform').css('color', 'red')
+                $('#create-inform').text("Thiếu mô tả chủ đề")
+                return
+            }
+
+            $.ajax({
+                url: '/field/',
+                beforeSend: function (request) {
+                    console.log("Bearer " + getCookie("Authorization"))
+                    request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
+                },
+                data: { value: value, description: description },
+                dataType: 'json',
+                type: 'POST',
+                success: function (data) {
+                    if (data.success) {
+                        $('#create-inform').css('color', 'green')
+                        $('#create-inform').text("Tạo thành công chủ đề")
+                        loadField()
+                    } else {
+                        $('#create-inform').css('color', 'red')
+                        $('#create-inform').text(data.message)
+                        loadField()
+                    }
+                },
+                error: function (xhr, status, error) {
+                    $('#create-inform').css('color', 'red')
+                    $('#create-inform').text(error)
+                    loadField()
+                }
+            });
+        }
+
+        function loadField() {
+            $.ajax({
+                url: '/field/',
+                dataType: 'json',
+                type: 'GET',
+                success: function (data) {
+                    if (data.success) {
+                        $('#field-list').empty()
+                        data.data.forEach(element => {
+                            if (element.active) {
+                                $('#field-list').append(
+                                    `<div class="d-flex mb-4 pt-4 border-top flex-column field" style="width: 100%; border-color: #232323;">
+                                    <div class="d-flex flex-column ms-3">
+                                        <p class="d-none" id="field-active">${element.active}</p>
+                                        <p class="d-none" id="field-id">${element._id}</p>
+                                        <p class="fw-bold" id="field-value">${element.value}</p>
+                                        <p id="field-des">${element.description}</p>
+                                    </div>
+                                    <div class="d-flex flex-row ms-3 mt-3">
+                                        <button class="btn btn-outline-success edit-field" >Sửa chủ đề</button>
+                                        <button class="btn btn-outline-warning ms-4 delete-field" >Ẩn chủ đề</button>
+                                        <button class="btn btn-outline-danger ms-4 hard-delete-field" >Xóa chủ đề</button>
+                                    </div>
+                                </div>`
+                                )
+                            } else {
+                                $('#field-list').append(
+                                    `<div class="d-flex mb-4 pt-4 border-top flex-column field" style="width: 100%; border-color: #232323;">
+                                    <div class="d-flex flex-column ms-3">
+                                        <p class="d-none" id="field-active">${element.active}</p>
+                                        <p class="d-none" id="field-id">${element._id}</p>
+                                        <p class="fw-bold" id="field-value">${element.value}</p>
+                                        <p>${element.description}</p>
+                                    </div>
+                                    <div class="d-flex flex-row ms-3 mt-3">
+                                        <button class="btn btn-outline-success edit-field" >Sửa chủ đề</button>
+                                        <button class="btn btn-outline-warning ms-4 delete-field" >Hiện chủ đề</button>
+                                        <button class="btn btn-outline-danger ms-4 hard-delete-field" >Xóa chủ đề</button>
+                                    </div>
+                                </div>`
+                                )
+                            }
+
+                        });
+                        $('.edit-field').click((event) => {
+                            const fieldValue = event.target.parentElement.parentElement.querySelector('#field-value').innerHTML
+                            const fieldId = event.target.parentElement.parentElement.querySelector('#field-id').innerHTML
+                            const fieldDes = event.target.parentElement.parentElement.querySelector('#field-des').innerHTML
+                            $('#edit-field-value').text("Chủ đề hiện tại: " + fieldValue)
+                            $('#edit-field-value').css('color', 'black')
+                            $('#edit-field-id').val(fieldId)
+                            $('#edit-field-id').css('color', 'black')
+                            $('#edit-field-new-value').val(fieldValue)
+                            $('#edit-field-des').val(fieldDes)
+                            $('#modalCenter').modal('show');
+                        })
+
+                        $('.delete-field').click((event) => {
+                            const fieldValue = event.target.parentElement.parentElement.querySelector('#field-value').innerHTML
+                            const fieldId = event.target.parentElement.parentElement.querySelector('#field-id').innerHTML
+                            const fieldActive = event.target.parentElement.parentElement.querySelector('#field-active').innerHTML
+
+                            if (fieldActive === 'true') {
+                                if (confirm("Bạn có chắc chắn muốn ẩn chủ đề " + fieldValue)) {
+                                    deleteField({ id: fieldId })
+                                }
+                            } else {
+                                if (confirm("Bạn có chắc chắn muốn hiện chủ đề " + fieldValue)) {
+                                    deleteField({ id: fieldId })
+                                }
+                            }
+
+                        })
+
+                        $('.hard-delete-field').click((event) => {
+                            const fieldValue = event.target.parentElement.parentElement.querySelector('#field-value').innerHTML
+                            const fieldId = event.target.parentElement.parentElement.querySelector('#field-id').innerHTML
+                            if (confirm(`Bạn có chắc chắn muốn xóa chủ đề ${fieldValue}\nViệc này có thể ảnh hướng tới dữ liệu sau này!`)) {
+                                hardDeleteField({ id: fieldId })
+                            }
+
+                        })
+                    }
+                },
+            });
+        }
+
+        function editField(data) {
+            $.ajax({
+                url: '/field/',
+                dataType: 'json',
+                beforeSend: function (request) {
+                    console.log("Bearer " + getCookie("Authorization"))
+                    request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
+                },
+                type: 'PUT',
+                data: data,
+                success: function (data) {
+                    if (data.success) {
+                        loadField()
+                        $('#modalCenter').modal('hide');
+                    }
+                },
+            });
+        }
+
+        function deleteField(data) {
+            $.ajax({
+                url: '/field/hideField',
+                dataType: 'json',
+                beforeSend: function (request) {
+                    console.log("Bearer " + getCookie("Authorization"))
+                    request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
+                },
+                type: 'PUT',
+                data: data,
+                success: function (data) {
+                    if (data.success) {
+                        loadField()
+                    }
+                },
+            });
+        }
+
+        function hardDeleteField(data) {
+            $.ajax({
+                url: '/field/',
+                dataType: 'json',
+                beforeSend: function (request) {
+                    console.log("Bearer " + getCookie("Authorization"))
+                    request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
+                },
+                type: 'DELETE',
+                data: data,
+                success: function (data) {
+                    if (data.success) {
+                        loadField()
+                    }
+                },
+            });
+        }
+
+        // call
+        loadField()
+
+        $('#create-field-btn').click((event) => {
+            if ($('#create-field-btn').text() === 'Đóng') {
+                $('#create-field-btn').text("Tạo chủ đề")
+                $('#create-inform').text("")
+                $('#des').val("")
+                $('#value').val("")
+            } else {
+                $('#create-field-btn').text('Đóng')
+            }
+            $('#add-field-form').toggleClass('d-none')
+        })
+
+        $('#add-field').click(() => {
+            createField()
+        })
+
+        $('#edit-field').click(() => {
+            const value = $('#edit-field-new-value').val()
+            const description = $('#edit-field-des').val()
+            const id = $('#edit-field-id').val()
+            console.log(id)
+
+            if (value === "") {
+                $('#edit-inform').css('color', 'red')
+                $('#edit-inform').text("Thiếu tên chủ đề")
+                return
+            }
+
+            if (description === "") {
+                $('#edit-inform').css('color', 'red')
+                $('#edit-inform').text("Thiếu mô tả chủ đề")
+                return
+            }
+
+            editField({ fieldId: id, value: value, description: description })
+        })
+
+
+    </script>
+
+</body>
+
+</html>

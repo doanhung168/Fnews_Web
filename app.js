@@ -11,9 +11,11 @@ const mongoose = require('mongoose')
 
 const userRouter = require('./routes/user_router');
 const authRouter = require('./routes/auth_router')
-const mediaRouter = require('./routes/media_router')
+const newsRouter = require('./routes/news_router')
 const viewRouter = require('./routes/view_router')
+const fieldRouter = require('./routes/field_router')
 const otherRouter = require('./routes/other_router')
+const videoRouter = require('./routes/video_router')
 
 
 mongoose.connect(process.env.DATABASE_URL)
@@ -42,9 +44,11 @@ app.use(bodyParser.json({ limit: '100mb' }))
 
 app.use('', viewRouter)
 app.use('/user', userRouter)
-app.use('/media', mediaRouter)
+app.use('/news', newsRouter)
 app.use('/auth', authRouter)
 app.use('/other', otherRouter)
+app.use('/field', fieldRouter)
+app.use('/video', videoRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

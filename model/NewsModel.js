@@ -1,21 +1,22 @@
 const mongoose = require('mongoose')
 const {Schema} = require('mongoose')
 
-const MediaSchema = new Schema({
+const NewsSchema = new Schema({
     avatar: String,
     title: String,
-    type: String,
-    field: String,
+    field: {type: Schema.Types.ObjectId},
     content: String,
+    like : {type: Number, default: 0},
+    dislike: {type: Number, default: 0},
     comment: [{type: Schema.Types.ObjectId, ref: 'Comment'}],
-    time: {type: Number, default: Date.now },
+    time: Number,
     state: {type: Number, default: 1}, // 1.pending, 2.approved, 3.reject
+    stateExtra: String,
     active: {type: Boolean, default: true},
     tags: [String],
     author: [{type: Schema.Types.ObjectId, ref: 'User'}],
-    like : {type: Number, default: 0},
-    dislike: {type: Number, default: 0}
+    authorName: String, 
 })
 
-const Media = mongoose.model('Media', MediaSchema)
-module.exports = Media
+const News = mongoose.model('News', NewsSchema)
+module.exports = News
