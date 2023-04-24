@@ -21,22 +21,22 @@
         </div>
         <div id="news-box" class="container">
             <p class="fs-4 fw-bolder mt-3 p-0">Sửa bài viết</p>
-            <p><%=id%></p>
+            <input type="hidden" value="<%=id%>" id="news-id">
             <form class="mt-3" onsubmit="return false">
                 <div class="mb-4 mt-0">
-                    <label for="content" class="form-label fw-bold">Nội dung bài viết</label>
-                    <textarea class="form-control" id="content" required></textarea>
+                    <label for="news-content" class="form-label fw-bold">Nội dung bài viết</label>
+                    <textarea class="form-control" id="news-content" required></textarea>
                 </div>
                 <div class="mb-4">
-                    <label for="title" class="form-label fw-bold">Tiêu đề bài viết</label>
-                    <textarea class="form-control" id="title" required></textarea>
+                    <label for="news-title" class="form-label fw-bold">Tiêu đề bài viết</label>
+                    <textarea class="form-control" id="news-title" required></textarea>
                 </div>
                 <div class="mb-4 mt-0">
                     <label for="avatar" class="form-label fw-bold m-0">Ảnh bìa</label>
                     <div class="my-3 d-flex flex-row justify-content-start flex-wrap">
                         <div
                             class="d-flex flex-column justify-content-center align-items-center me-3 position-relative">
-                            <img id="avatar" class="image" src="/images/add_image_placeholder.png" width="100px"
+                            <img id="news-avatar" class="image" src="/images/add_image_placeholder.png" width="100px"
                                 style="object-fit: cover;">
                             <form id="uploadForm" enctype="multipart/form-data" class="d-none">
                                 <input type="file" id="file" name="avatar" class="d-none" />
@@ -47,16 +47,16 @@
                 </div>
                 <div class="mb-4">
                     <label for="title" class="form-label fw-bold">Lĩnh vực</label>
-                    <select class="form-select" id="field" required>
+                    <select class="form-select" id="news-field" required>
                     </select>
                 </div>
                 <div class="mb-4">
                     <label for="title" class="form-label fw-bold">Tag</label>
-                    <input type="text" class="form-control" id="tag"
+                    <input type="text" class="form-control" id="news-tag"
                         placeholder="#nội_dung_tag_1 #nội_dung_tag_2 ...." required>
                 </div>
                 <div class="mb-4 mt-4">
-                    <button id="add-news" class="btn btn-success">Công khai bài viết</button>
+                    <button id="news-edit" class="btn btn-success">Sửa bài viết</button>
                 </div>
                 <p id="inform" class="my-3"></p>
             </form>
@@ -91,7 +91,7 @@
 
     <script>
         let editor;
-        CKEDITOR.ClassicEditor.create(document.getElementById("content"), {
+        CKEDITOR.ClassicEditor.create(document.getElementById("news-content"), {
             // https://ckeditor.com/docs/ckeditor5/latest/features/toolbar/toolbar.html#extended-toolbar-configuration-format
             toolbar: {
                 items: [
@@ -232,34 +232,172 @@
             ]
         }).then(newEditor => {
             editor = newEditor;
-            startToFillContent()
+            startToFillContent(editor)
 
         }).catch(error => {
             console.error(error);
         });
 
 
-        function startToFillContent() {
+        function startToFillContent(editor) {
+            function loadField() {
+                $.ajax({
+                    url: '/field/',
+                    dataType: 'json',
+                    type: 'GET',
+                    success: function (data) {
+                        if (data.success) {
+                            $('#news-field').empty()
+                            data.data.forEach(element => {
+                                if (element.active) {
+                                    $('#news-field').append(`<option value="${element._id}">${element.value}</option>`)
+                                }
+                            })
+                        }
+                    },
+                });
+            }
+
+            loadField()
+
             $.ajax({
-                    url: "/news/",
+                url: "/news/" + $('#news-id').val(),
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    if (data.success) {
+                        editor.setData(data.data.content)
+                        $('#news-title').text(data.data.title)
+
+                        $('#news-avatar').attr('src', '/' + data.data.avatar)
+
+                        let stringTag = ""
+                        data.data.tags.forEach((element) => {
+                            stringTag += " " + element
+                        })
+                        $('#news-tag').val(stringTag)
+
+                    } else {
+                        console.log(data.message)
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    console.error("Yêu cầu thất bại: " + textStatus + ", " + errorThrown);
+                }
+            });
+
+
+            function create_ajax(url) {
+                var fd = new FormData($("form").get(0));
+                $.ajax({
+                    url: url,
+                    data: fd,
+                    dataType: 'json',
+                    type: 'POST',
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        if (data.success) {
+                            $('#news-avatar').attr('src', "/" + data.data.imageUrl)
+                        } else {
+                            console.log(data.message)
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log('Error: ' + error.message);
+                    }
+                });
+                event.preventDefault();
+            }
+
+            $('#news-avatar').click(() => {
+                $('#file').click()
+            })
+
+            $('#file').on('change', (event) => {
+                $('#upload-button').click()
+            })
+
+            $('#upload-button').click(function (e) {
+                create_ajax('/other/upload-image')
+            })
+
+            function getCookie(name) {
+                function escape(s) { return s.replace(/([.*+?\^$(){}|\[\]\/\\])/g, '\\$1'); }
+                var match = document.cookie.match(RegExp('(?:^|;\\s*)' + escape(name) + '=([^;]*)'));
+                return match ? match[1] : null;
+            }
+
+            async function uploadVideoInNews(videoUrl, linkedNews, title) {
+                console.log(videoUrl + " " + linkedNews + " " + title)
+                $.ajax({
+                    url: '/video/',
                     beforeSend: function (request) {
                         console.log("Bearer " + getCookie("Authorization"))
                         request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
                     },
-                    type: "PUT",
-                    dataType: "json",
-                    data: { id: id },
+                    data: { content: videoUrl, linkedNews: linkedNews, title: title },
+                    dataType: 'json',
+                    type: 'POST',
                     success: function (data) {
                         if (data.success) {
-                            loadNews()
+                            console.log('upload video success ' + data.data.id)
+                        } else {
+                            console.log(data.message)
                         }
                     },
-                    error: function (xhr, textStatus, errorThrown) {
-                        console.error("Yêu cầu thất bại: " + textStatus + ", " + errorThrown);
+                    error: function (xhr, status, error) {
+                        console.log('Error: ' + error.message);
+                    }
+                });
+            }
+
+            $('#news-edit').click(() => {
+
+                const content = editor.getData()
+                const title = $('#news-title').val()
+
+                const _avatar = $('#news-avatar').attr('src')
+                const avatar = _avatar.substring(1, _avatar.length)
+                
+                const field = $('#news-field').val()
+                const tag = $('#news-tag').val()
+                const tags = tag.split(' ')
+
+                if (avatar === '/images/add_image_placeholder.png') {
+                    $('#inform').css('color', 'red')
+                    $('#inform').text('Vui lòng chọn ảnh bìa cho bài viết')
+                    return
+                }
+
+                $.ajax({
+                    url: '/news/',
+                    beforeSend: function (request) {
+                        console.log("Bearer " + getCookie("Authorization"))
+                        request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
+                    },
+                    data: { id: $('#news-id').val(), content, title, avatar, field, tags, state: 0, stateExtra: null},
+                    dataType: 'json',
+                    type: 'PUT',
+                    success: async function (data) {
+                        if (data.success) {
+                            $('#modalCenter').modal('show');
+                            const parser = new DOMParser()
+                            const dom = parser.parseFromString(content, "text/html")
+                            dom.querySelectorAll('oembed[url]').forEach(async (element) => {
+                                await uploadVideoInNews(element.attributes.url.value, data.data.id, data.data.title)
+                            });
+                        } else {
+                            $('#inform').css('color', 'red')
+                            $('#inform').text(data.message)
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log('Error: ' + error.message);
                     }
                 });
 
-
+            })
         }
     </script>
 </body>

@@ -51,6 +51,10 @@ const ViewController = {
 
     fieldManagement: (req, res) => {
         res.render('field_management')
+    },
+
+    editNews : (req, res) => {
+        res.render('news_edit', {id: req.params.id})
     }
 
 }

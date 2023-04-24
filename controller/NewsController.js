@@ -6,7 +6,7 @@ const NewsController = {
 
     get: async (req, res) => {
         try {
-            let { page, per_page, field } = req.query
+            let { page, per_page, field, active } = req.query
             if (per_page == null) {
                 per_page = 10
             }
@@ -17,11 +17,25 @@ const NewsController = {
 
 
             if (field) {
-                totalItem = await News.countDocuments({ field })
-                news = await News.find({ field }).sort({ time: -1 }).skip(skip).limit(per_page)
+
+                if (active) {
+                    totalItem = await News.countDocuments({ field, active })
+                    news = await News.find({ field, active }).sort({ time: -1 }).skip(skip).limit(per_page)
+                } else {
+                    totalItem = await News.countDocuments({ field })
+                    news = await News.find({ field }).sort({ time: -1 }).skip(skip).limit(per_page)
+                }
+
             } else {
-                totalItem = await News.countDocuments()
-                news = await News.find().sort({ time: -1 }).skip(skip).limit(per_page)
+
+                if(active) {
+                    totalItem = await News.countDocuments({active})
+                    news = await News.find().sort({ time: -1 }).skip(skip).limit(per_page)
+                } else {
+                    totalItem = await News.countDocuments()
+                    news = await News.find().sort({ time: -1 }).skip(skip).limit(per_page)
+                }
+                
             }
 
 
@@ -39,7 +53,8 @@ const NewsController = {
 
     getById: async (req, res) => {
         try {
-            const news = await News.findOne({ _id: req.body.id, active: true })
+            console.log(req.params.id)
+            const news = await News.findOne({ _id: req.params.id})
             if (news) {
                 return res.json({ success: true, message: null, data: news })
             } else {
@@ -53,7 +68,7 @@ const NewsController = {
 
     getMyNews: async (req, res) => {
         try {
-            const news = await News.find({author: req.user._id})
+            const news = await News.find({ author: req.user._id })
             return res.json({ success: true, message: null, data: news })
 
         } catch (e) {
@@ -63,7 +78,6 @@ const NewsController = {
 
     add: async (req, res) => {
         try {
-            console.log(req.body)
             const news = new News(req.body)
             news.author = req.user._id
             await news.save()
@@ -80,8 +94,9 @@ const NewsController = {
 
     update: async (req, res) => {
         try {
-            const news = await News.findByIdAndUpdate(req.body._id, req.body, { returnDocument: 'after' })
-            return res.json({ success: true, message: null, data: news })
+            console.log(req.body)
+            const news = await News.findByIdAndUpdate(req.body.id, req.body, { returnDocument: 'after' })
+            return res.json({ success: true, message: null, data: { id: news._id, title: news.title } })
         } catch (e) {
             return res.json({ success: false, message: e.message, data: null })
         }
@@ -111,27 +126,27 @@ const NewsController = {
         }
     },
 
-    hideNews : async (req, res) => {
+    hideNews: async (req, res) => {
         try {
             console.log(req.body.id)
             const news = await News.findById(req.body.id)
-            if(news && req.user._id.equals(news.author)) {
-                if(news.active) {
-                    news.active = false 
+            if (news && req.user._id.equals(news.author)) {
+                if (news.active) {
+                    news.active = false
                 } else {
                     news.active = true
                 }
                 await news.save()
                 return res.json({ success: true, message: null, data: news })
             } else {
-                return res.json({ success: false, message: "Không tìm thấy bài viết hoặc không có quyền để thay đổi", data: null})
+                return res.json({ success: false, message: "Không tìm thấy bài viết hoặc không có quyền để thay đổi", data: null })
             }
         } catch (e) {
             return res.json({ success: false, message: e.message, data: null })
         }
     }
 
-    
+
 
 }
 

@@ -17,6 +17,7 @@ router
     .get('/profile', ViewController.profile)
     .get('/my-news', ViewController.myNews)
     .get('/field-management', ViewController.fieldManagement)
+    .get('/news-edit/:id', ViewController.editNews)
     .get('/', ViewController.home)
 
 module.exports = router
