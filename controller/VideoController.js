@@ -59,6 +59,22 @@ const VideoController = {
         } catch (e) {
             return res.json({ success: false, message: e.message, data: null })
         }
+    },
+
+    addReport: async (reportId, videoId) => {
+        try {
+            const video = await Video.findOne({_id: videoId})
+            if(video) {
+                video.reports.push(reportId)
+                await video.save()
+                return true;
+            } else {
+                return false;
+            }
+        } catch (e) {
+            console.log(e)
+            return false;
+        }
     }
 }
 

@@ -47,6 +47,10 @@ const UserController = {
             console.log(e)
             return false
         }
+    },
+
+    getRoll : async (req, res) => {
+        return res.json({ success: true, message: null, data: {roll: req.user.roll} })
     }
 }
 

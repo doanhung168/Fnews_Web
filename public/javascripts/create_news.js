@@ -254,7 +254,7 @@ $('#add-news').click(() => {
             console.log("Bearer " + getCookie("Authorization"))
             request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
         },
-        data: { content, title, avatar, field, tags, type: 'news', state: 1 },
+        data: { content, title, avatar, field, tags, type: 'news' },
         dataType: 'json',
         type: 'POST',
         success: async function (data) {

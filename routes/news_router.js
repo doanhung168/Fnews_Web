@@ -11,7 +11,8 @@ router
     .get('/', NewsController.get)
     .post('/', passport.authenticate(Constraint.JWT, { session: false }), NewsController.add)
     .put('/', passport.authenticate(Constraint.JWT, { session: false }), NewsController.update)
+    .put('/hideNews', passport.authenticate(Constraint.JWT, { session: false }), NewsController.hideNews)
     .delete('/', passport.authenticate(Constraint.JWT, { session: false }), NewsController.delete)
-
+    .get('/my-news', passport.authenticate(Constraint.JWT, { session: false }), NewsController.getMyNews)
 
 module.exports = router;
