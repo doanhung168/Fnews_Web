@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/bootstrap-5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="fontawesome/fontawesome-free-6.3.0-web/css/all.min.css">
+    <link rel="stylesheet" href="/stylesheets/base.css">
+    <title>Phê duyệt bình luận</title>
+</head>
+
+<body style="overflow: hidden;">
+    <div class="d-flex flex-column">
+        <div class="d-flex" style="height: 45px;">
+            <div class="col-2 d-flex px-3 align-items-center fs-5" style="background-color: rgb(41, 41, 41);">
+                <a class="navbar-brand fw-bold" style="color: #ff6200;" href="/">FNEWS</a>
+            </div>
+            <div class="col-9 p-0 d-flex" style="background-color: rgb(72, 72, 72);"></div>
+            <div class="col-1 d-flex justify-content-center align-items-center"
+                style="background-color: rgb(41, 41, 41);">
+                <p style="color: #ffffff;cursor: pointer;">Đăng xuất</p>
+            </div>
+        </div>
+        <div class="flex-grow-1 d-flex flex-row">
+            <div class="col-2 bg-light h-100 d-flex flex-column pt-3" style="min-height: 750px;" id="side-bar">
+                <a href="/profile" class="d-flex align-items-center px-3 py-2">
+                    <i class="fa-regular fa-user"></i>
+                    <p class="ps-2 fw-bolder">Thông tin tài khoản</p>
+                </a>
+                <a href="/my-news" class="d-flex align-items-center px-3 py-2">
+                    <i class="fa-solid fa-newspaper"></i>
+                    <p class="ps-2 fw-bolder">Bài viết của tôi</p>
+                </a>
+                <a href="/my-videos" class="d-flex align-items-center px-3 py-2">
+                    <i class="fa-solid fa-video"></i>
+                    <p class="ps-2 fw-bolder">Video của tôi</p>
+                </a>
+                <a href="#" class="d-flex align-items-center px-3 py-2">
+                    <i class="fa-solid fa-comment"></i>
+                    <p class="ps-2 fw-bolder" href="#">Ý kiến của tôi</p>
+                </a>
+                <a href="#" class="d-flex align-items-center px-3 py-2">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    <p class="ps-2 fw-bolder" href="#">Tin đã lưu</p>
+                </a>
+            </div>
+            <div class="col-10 d-flex flex-column" style="overflow: auto; height: 750px;">
+                <div class="d-flex flex-row px-5 py-3 justify-content-between align-items-center">
+                    <p class="fw-bolder">Tổng số bình luận: <span id="comment-total" class="fw-lighter">0</span></p>
+                    <div class="d-flex">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" checked name="flexRadioDefault"
+                                id="inlineCheckbox1" value="1" onclick="loadComment('/comment?state=0')">
+                            <label class="form-check-label" for="inlineCheckbox1">Bình luận chưa phê duyệt</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="inlineCheckbox2"
+                                value="2" onclick="loadComment('/comment')">
+                            <label class="form-check-label" for="inlineCheckbox2">Tất cả bình luận</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-5 py-2" id="comment-list">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/javascripts/jquery.js"></script>
+    <script src="/bootstrap-5/js/bootstrap.min.js"></script>
+    <script src="/javascripts/show_addmin_board.js"></script>
+
+    <script>
+        function loadComment(url) {
+            $.ajax({
+                url: url,
+                type: 'get',
+                success: (data) => {
+                    if (data.success) {
+                        $('#comment-total').text(data.data.length)
+                        $('#comment-list').empty()
+                        data.data.forEach(element => {
+                            $('#comment-list').append(
+                                `<div class="d-flex flex-column bg-light py-3 px-4 mb-4">
+                                    <p class="mb-2"><b>Mã: </b><span class="comment-id">${element._id}</span><a style="color: #6075f0;font-size:14px" href="/news-view/${element.target}">( Xem )</a></p>
+                                    <p class="comment-content mb-2"><b>Nội dung:</b> ${element.content}</p>
+                                    <button onclick="showReviewForm(this)" class="btn btn-success review-action mb-2" style="width: 200px;">Phê duyệt</button>
+                                    <div class="review-form mt-4 bg-white p-3" style="display:none">
+                                        <select class="w-25 mb-2 form-control comment-state">
+                                            <option value="0">Chưa phê duyệt</option>
+                                            <option value="1">Phê duyệt</option>
+                                            <option value="2">Từ chối phê duyệt</option>
+                                        </select>
+                                        <input type="text" placeholder="Vui lòng nhập bình luận phê duyệt" class="comment-state-extra mb-2 form-control">
+                                        <button class="btn btn-success" style="width: 200px" onclick="reviewComment(this)">Xác nhận</button>
+                                    </div>
+                                </div>`
+                            )
+                        });
+                    } else {
+                        console.log(data.message)
+                    }
+                }
+            })
+        }
+
+        loadComment('/comment?state=0')
+
+        function showReviewForm(event) {
+            const actions = event.parentElement.querySelector('.review-form')
+            $(actions).toggle()
+        }
+
+        function reviewComment(event) {
+            const parent = event.parentElement
+            const id = parent.parentElement.querySelector('.comment-id').textContent
+            const state = parent.querySelector('.comment-state').value
+            const state_extra = parent.querySelector('.comment-state-extra').value
+            if (state_extra == '' || state_extra == null) {
+                alert('Vui lòng nhập bình luận phê duyệt')
+                return
+            }
+
+            $.ajax({
+                url: '/comment',
+                type: 'put',
+                beforeSend: (request) => {
+                    request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
+                },
+                data: { id: id, state: state, state_extra: state_extra, time: Date.now() },
+                success: (data) => {
+                    if (data.success) {
+                        alert('Phê duyệt bình luận thành công!')
+                        location.reload()
+                    } else {
+                        console.log(data.message)
+                    }
+                }
+            })
+
+        }
+
+
+
+    </script>
+
+</body>
+
+
+
+</html>

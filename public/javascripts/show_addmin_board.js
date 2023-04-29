@@ -22,7 +22,7 @@ function showAdminBoard() {
                             <a href="/video-management" class="d-flex align-items-center px-3 py-2">
                                 <p class="fw-bolder" href="#">Video</p>
                             </a>
-                            <a href="#" class="d-flex align-items-center px-3 py-2">
+                            <a href="/comment-manager" class="d-flex align-items-center px-3 py-2">
                                 <p class="fw-bolder" href="#">Bình luận</p>
                             </a>
                             <a href="#" class="d-flex align-items-center px-3 py-2">

@@ -79,6 +79,10 @@ const ViewController = {
 
     viewNews : (req, res) => {
         res.render('news_view',{id: req.params.id})
+    },
+
+    commentManagement : (req, res) => {
+        res.render('admin_comment_management')
     }
 
 }

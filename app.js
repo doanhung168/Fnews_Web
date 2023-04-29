@@ -16,7 +16,7 @@ const viewRouter = require('./routes/view_router')
 const fieldRouter = require('./routes/field_router')
 const otherRouter = require('./routes/other_router')
 const videoRouter = require('./routes/video_router')
-
+const commentRouter = require('./routes/comment_router')
 
 mongoose.connect(process.env.DATABASE_URL)
   .then(() => console.log('Database Connected!'))
@@ -49,6 +49,7 @@ app.use('/auth', authRouter)
 app.use('/other', otherRouter)
 app.use('/field', fieldRouter)
 app.use('/video', videoRouter)
+app.use('/comment', commentRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -86,10 +86,11 @@
                     <div id="comment-part" class="mt-4">
 
                         <div id="comment-text-part" style="display: none;">
-                            <label for="exampleFormControlInput1" class="form-label fw-bolder">Ý kiến</label>
-                            <input type="text" class="form-control" id="exampleFormControlInput1"
+                            <label for="comment-content" class="form-label fw-bolder">Ý kiến</label>
+                            <input type="text" class="form-control" id="comment-content"
                                 placeholder="Nhập ý kiến của bạn...">
-                            <button id="comment-sent">Gửi</button>
+                            <button class="btn btn-success my-2 px-4" onclick="sendComment('0')"
+                                id="comment-sent">Gửi</button>
                         </div>
                         <div id="comment-list">
 
@@ -270,10 +271,33 @@
             }
         }
 
-        function sendComment(content) {
-            $.ajax({
-                
-            })
+        function sendComment(targetType) {
+            content = $('#comment-content').val()
+
+            if (content == "" || content == null) {
+                alert("Vui lòng nhập nội dung bình luận")
+                return
+            }
+
+            if (content) {
+                $.ajax({
+                    url: '/comment/',
+                    type: 'post',
+                    data: { content: content, target: $('#news-id').val(), target_type: targetType },
+                    beforeSend: function (request) {
+                        request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
+                    },
+                    success: (data) => {
+                        if (data.success) {
+                            alert('Bình luận thành công.\nVui lòng chờ phê duyệt')
+                            $('#comment-text-part').toggle()
+                        } else {
+                            console.log(data.message)
+                        }
+                    }
+                })
+
+            }
         }
 
 

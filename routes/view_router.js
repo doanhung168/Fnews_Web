@@ -24,6 +24,7 @@ router
     .get('/my-videos', ViewController.myVideos)
     .get('/video-management', ViewController.videoManagement)
     .get('/video-review/:id', ViewController.reviewVideo)
+    .get('/comment-manager', ViewController.commentManagement)
     .get('/', ViewController.home)
 
 module.exports = router
