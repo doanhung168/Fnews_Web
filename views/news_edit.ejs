@@ -229,7 +229,11 @@
                 // Careful, with the Mathtype plugin CKEditor will not load when loading this sample
                 // from a local file system (file://) - load this site via HTTP server if you enable MathType
                 'MathType'
-            ]
+            ],
+            mediaEmbed: {
+                previewsInData: true,
+                provides : ['youtube']
+            }
         }).then(newEditor => {
             editor = newEditor;
             startToFillContent(editor)
@@ -276,6 +280,8 @@
                             stringTag += " " + element
                         })
                         $('#news-tag').val(stringTag)
+
+                        $('#news-field').val(data.data.field._id)
 
                     } else {
                         console.log(data.message)
@@ -359,7 +365,7 @@
 
                 const _avatar = $('#news-avatar').attr('src')
                 const avatar = _avatar.substring(1, _avatar.length)
-                
+
                 const field = $('#news-field').val()
                 const tag = $('#news-tag').val()
                 const tags = tag.split(' ')
@@ -376,7 +382,7 @@
                         console.log("Bearer " + getCookie("Authorization"))
                         request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
                     },
-                    data: { id: $('#news-id').val(), content, title, avatar, field, tags, state: 0, stateExtra: null},
+                    data: { id: $('#news-id').val(), content, title, avatar, field, tags, state: 0, stateExtra: null },
                     dataType: 'json',
                     type: 'PUT',
                     success: async function (data) {
@@ -384,7 +390,7 @@
                             $('#modalCenter').modal('show');
                             const parser = new DOMParser()
                             const dom = parser.parseFromString(content, "text/html")
-                            dom.querySelectorAll('oembed[url]').forEach(async (element) => {
+                            dom.querySelectorAll('iframe[url]').forEach(async (element) => {
                                 await uploadVideoInNews(element.attributes.url.value, data.data.id, data.data.title)
                             });
                         } else {

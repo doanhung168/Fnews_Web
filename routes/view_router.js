@@ -17,7 +17,13 @@ router
     .get('/profile', ViewController.profile)
     .get('/my-news', ViewController.myNews)
     .get('/field-management', ViewController.fieldManagement)
+    .get('/news-management', ViewController.newsManagement)
     .get('/news-edit/:id', ViewController.editNews)
+    .get('/news-view/:id', ViewController.viewNews)
+    .get('/news-review/:id', ViewController.reviewNews)
+    .get('/my-videos', ViewController.myVideos)
+    .get('/video-management', ViewController.videoManagement)
+    .get('/video-review/:id', ViewController.reviewVideo)
     .get('/', ViewController.home)
 
 module.exports = router

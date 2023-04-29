@@ -33,6 +33,7 @@ const UserController = {
         }
     },
 
+    
     updateMedia: async (userId, mediaId) => {
         try {
             const user = await User.findById(userId)
@@ -48,6 +49,31 @@ const UserController = {
             return false
         }
     },
+
+    pullSavedNews: async (req, res) => {
+
+    },
+
+    getSavedNews: async (req, res) => {
+
+    },
+
+    getSeenNews: async(req, res) => {
+
+    },
+
+    pushSeenNews: async(req, res) => {
+
+    },
+
+    getLikedNews: async(req, res) => {
+
+    },
+
+    pullLikedNews: async (req, res) => {
+
+    },
+
 
     getRoll : async (req, res) => {
         return res.json({ success: true, message: null, data: {roll: req.user.roll} })

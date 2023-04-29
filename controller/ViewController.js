@@ -55,6 +55,30 @@ const ViewController = {
 
     editNews : (req, res) => {
         res.render('news_edit', {id: req.params.id})
+    },
+
+    newsManagement: (req, res) => {
+        res.render('admin_news_management')
+    },
+
+    reviewNews: (req, res) => {
+        res.render('admin_news_review', {id: req.params.id})
+    },
+
+    myVideos : (req, res) => {
+        res.render('my_video')
+    },
+
+    videoManagement: (req, res) => {
+        res.render('admin_video_management')
+    },
+
+    reviewVideo: (req, res) => {
+        res.render('admin_review_video', {id: req.params.id})
+    },
+
+    viewNews : (req, res) => {
+        res.render('news_view',{id: req.params.id})
     }
 
 }

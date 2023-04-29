@@ -137,7 +137,11 @@ CKEDITOR.ClassicEditor.create(document.getElementById("content"), {
         // Careful, with the Mathtype plugin CKEditor will not load when loading this sample
         // from a local file system (file://) - load this site via HTTP server if you enable MathType
         'MathType'
-    ]
+    ],
+    mediaEmbed: {
+        previewsInData: true,
+        provides : ['youtube']
+    }
 }).then(newEditor => {
     editor = newEditor;
 }).catch(error => {
@@ -209,15 +213,15 @@ function getCookie(name) {
     return match ? match[1] : null;
 }
 
-async function uploadVideoInNews(videoUrl, linkedNews, title) {
-    console.log(videoUrl + " " + linkedNews + " " + title)
+async function uploadVideoInNews(videoUrl, linkedNews, title, field) {
+    console.log(videoUrl + " " + linkedNews + " " + title + " " + field)
     $.ajax({
         url: '/video/',
         beforeSend: function (request) {
             console.log("Bearer " + getCookie("Authorization"))
             request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
         },
-        data: { content: videoUrl, linkedNews: linkedNews, title: title },
+        data: { content: videoUrl, linkedNews: linkedNews, title: title, field: field},
         dataType: 'json',
         type: 'POST',
         success: function (data) {
@@ -254,7 +258,7 @@ $('#add-news').click(() => {
             console.log("Bearer " + getCookie("Authorization"))
             request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
         },
-        data: { content, title, avatar, field, tags, type: 'news' },
+        data: { content, title, avatar, field, tags },
         dataType: 'json',
         type: 'POST',
         success: async function (data) {
@@ -262,8 +266,8 @@ $('#add-news').click(() => {
                 $('#modalCenter').modal('show');
                 const parser = new DOMParser()
                 const dom = parser.parseFromString(content, "text/html")
-                dom.querySelectorAll('oembed[url]').forEach(async (element) => {
-                    await uploadVideoInNews(element.attributes.url.value, data.data.id, data.data.title)
+                dom.querySelectorAll('div[data-oembed-url]').forEach(async (element) => {
+                    await uploadVideoInNews(element.attributes[0].value, data.data.id, data.data.title, data.data.field)
                 });
             } else {
                 $('#inform').css('color', 'red')

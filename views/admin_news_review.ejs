@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="fontawesome/fontawesome-free-6.3.0-web/css/all.min.css">
+    <link rel="stylesheet" href="/stylesheets/create_news.css">
+    <title>Phê duyệt bài viết</title>
+</head>
+
+<body>
+    <div>
+        <div class="d-flex" style="height: 45px;">
+            <div class="col-2 d-flex px-3 align-items-center fs-5" style="background-color: rgb(41, 41, 41);">
+                <a class="navbar-brand fw-bold" style="color: #ff6200;" href="/">FNEWS</a>
+            </div>
+            <div class="col-10 p-0 d-flex" style="background-color: rgb(72, 72, 72);"></div>
+        </div>
+        <div id="news-box" class="container">
+            <p class="fs-4 fw-bolder mt-3 p-0">Phê duyệt bài viết</p>
+            <input type="hidden" value="<%=id%>" id="news-id">
+
+            <div class="d-flex mb-4 pt-4 border-top" style="width: 100%; border-color: #232323;">
+                <div style="width: 30%;">
+                    <img style="object-fit: cover;" height="180px" width="100%" id="news-avatar" src="" />
+                </div>
+                <div style="width: 70%;" class="d-flex flex-column">
+                    <p id="news-title" class="ms-3 me-3 fw-bold fs-5 text"
+                        style="font-family: 'Times New Roman', Times, serif; -webkit-line-clamp: 3; line-clamp: 3;">
+                    </p>
+                    <p class="ms-3 my-1 fw-bolder">Trạng thái: <span id="news-state" class="fw-normal ms-2"></span>
+                    </p>
+                    <p class="ms-3 my-1 fw-bolder">Chủ đề: <span id="news-field" class="fw-normal ms-2"></span></p>
+                    <p class="ms-3 my-1 fw-bolder">Tag: <span id="news-tag" class="fw-normal ms-2"></span></p>
+                    <p class="ms-3 my-1 fw-bolder">Người dùng: <a href="#" id="news-author"
+                            class="fw-normal ms-2"></a></p>
+                </div>
+            </div>
+
+            <h4 class="my-3">Nội dung bài viết</h4>
+            <div id="news-content" class="border border-1 border-dark p-5">
+
+            </div>
+
+            <div id="news-review-form" class="d-flex flex-column">
+                <div class="mb-3">
+                    <label for="#" class="my-2 fw-bold">Phê duyệt bài viết</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="new-news-state" id="flexRadioDefault1"
+                            value="1">
+                        <label class="form-check-label" for="flexRadioDefault1">
+                            Phê duyệt
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="new-news-state" id="flexRadioDefault2"
+                            value="0">
+                        <label class="form-check-label" for="flexRadioDefault2">
+                            Chưa phê duyệt
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="new-news-state" id="flexRadioDefault3"
+                            value="2">
+                        <label class="form-check-label" for="flexRadioDefault3">
+                            Từ chối phê duyệt
+                        </label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="news-state-extra" class="form-label fw-bold">Lý do phê duyệt hoặc từ
+                        chối</label>
+                    <textarea class="form-control" id="news-state-extra" rows="3"></textarea>
+                </div>
+                <button class="btn btn-success mb-3" style="width: 100px;" onclick="reviewNews()">Lưu</button>
+                <p class="my-4" id="inform"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modalCenter" tabindex="-1" role="dialog" aria-labelledby="emodalCenterTitle"
+        data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="emodalCenterTitle">Phê duyệt bài viết</h5>
+                </div>
+                <div class="modal-body text-success">
+                    <h5>Phê duyệt bài viết thành công.</h5>
+                </div>
+                <div class="modal-footer">
+                    <a href="/news-management" type="button" class="btn btn-secondary" data-dismiss="modal">Trở về
+                        trang quản lý bài viết</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/super-build/ckeditor.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <script src="/javascripts/show_addmin_board.js"></script>
+    <script>
+
+        $.ajax({
+            url: "/news/" + $('#news-id').val(),
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                if (data.success) {
+                    $('#news-content').html(data.data.content)
+                    $('#news-title').text(data.data.title)
+                    $('#news-avatar').attr('src', '/' + data.data.avatar)
+
+                    let stringTag = ""
+                    data.data.tags.forEach((element) => {
+                        stringTag += " " + element
+                    })
+                    $('#news-tag').text(stringTag)
+                    $('#news-field').text(data.data.field.value)
+
+                    const state = data.data.state
+                    if (state == 0) {
+                        $('#news-state').text('Chưa phê duyệt')
+                        $('input[type="radio"][value="0"]').prop('checked', true);
+                    } else if (state == 1) {
+                        $('#news-state').text('Đã phê duyệt')
+                        $('input[type="radio"][value="1"]').prop('checked', true);
+                    } else {
+                        $('#news-state').text('Từ chối')
+                        $('input[type="radio"][value="2"]').prop('checked', true);
+                    }
+
+
+                    $('#news-author').text(data.data.author.display_name)
+                    $('#news-author').attr('href', '/user-detail/' + data.data.author._id)
+
+                } else {
+                    console.log(data.message)
+                }
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                console.error("Yêu cầu thất bại: " + textStatus + ", " + errorThrown);
+            }
+        });
+
+        function reviewNews() {
+            const state = $('input[name=new-news-state]:checked').val()
+            const stateExtra = $('textarea').val()
+
+            if (!state) {
+                $('#inform').text("Vui lòng chọn trạng thái!")
+                return
+            }
+
+            if (stateExtra == "" || state == null) {
+                $('#inform').text("Vui lòng điền nhận xét")
+                return
+            }
+
+
+
+            $.ajax({
+                url: "/news/",
+                type: "PUT",
+                beforeSend: function (request) {
+                    console.log("Bearer " + getCookie("Authorization"))
+                    request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
+                },
+                dataType: "json",
+                data: { id: $('#news-id').val(), state: state, stateExtra: stateExtra, time: Date.now() },
+                success: function (resData) {
+                    if (resData.success) {
+                        $('#modalCenter').modal('show')
+                        $.ajax({
+                            url: "/video/review-video-through-news",
+                            type: "PUT",
+                            beforeSend: function (request) {
+                                console.log("Bearer " + getCookie("Authorization"))
+                                request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
+                            },
+                            dataType: "json",
+                            data: { news_id: resData.data.id, state: state, stateExtra: "Do phê duyệt bài viết liên quan" },
+                            success: function (data) {
+                                if (data.success) {
+                                    console.log('review video success')
+                                } else {
+                                    console.log(data.message)
+                                }
+                            },
+                            error: function (xhr, textStatus, errorThrown) {
+                                console.error("Yêu cầu thất bại: " + textStatus + ", " + errorThrown);
+                            }
+                        });
+
+                    } else {
+                        console.log(resData.message)
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    console.error("Yêu cầu thất bại: " + textStatus + ", " + errorThrown);
+                }
+            });
+        }
+
+    </script>
+</body>
+
+</html>

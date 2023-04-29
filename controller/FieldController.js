@@ -25,10 +25,10 @@ const FieldControler = {
     get: async (req, res) => {
         try {
             if(req.query.active) {
-                const fields = await Field.find({active: true}).sort({ time: -1 })
+                const fields = await Field.find({active: true}).sort({ time: 1 })
                 return res.json({ success: true, message: null, data: fields })
             } else {
-                const fields = await Field.find().sort({ time: -1 })
+                const fields = await Field.find().sort({ time: 1 })
                 return res.json({ success: true, message: null, data: fields })
             }
         } catch (error) {
