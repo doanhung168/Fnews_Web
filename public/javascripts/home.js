@@ -333,16 +333,30 @@ function loadField() {
             if (data.success) {
                 $('#field-list').empty()
                 $('#field-footer').empty()
-                currentField = data.data[0]._id
+
+                if($('#field').val() == null || $('#field').val() == "") {
+                    currentField = data.data[0]._id
+                } else {
+                    currentField = $('#field').val()
+                }
+
                 data.data.forEach(element => {
-                    $('#field-list').append(
-                        `<li>
-                            <p onclick="goTo('${element._id}')" style="cursor: pointer;">${element.value}</p>
-                        </li>`
-                    )
+                    if(element._id == currentField) {
+                        $('#field-list').append(
+                            `<li>
+                                <a href="/?field=${element._id}" data-field-value="${element.value}" style="cursor: pointer; color: rgb(255, 77, 0)">${element.value}</a>
+                            </li>`
+                        )
+                    } else {
+                        $('#field-list').append(
+                            `<li>
+                                <a href="/?field=${element._id}" data-field-value="${element.value}" style="cursor: pointer;">${element.value}</a>
+                            </li>`
+                        )
+                    }
 
                     $('#field-footer').append(
-                        `<p onclick="goTo('${element._id}')" style="cursor: pointer;font-weight: bold;" class="fw-bolder mb-3">${element.value}</p>`
+                        `<b onclick="goTo('${element._id}'); selectedField(this)" data-field-value="${element.value}" style="cursor: pointer;font-weight: bold;" class="fw-bolder mb-3">${element.value}</b>`
                     )
                 });
 
@@ -436,6 +450,19 @@ function loadHighViewNews() {
 }
 
 loadHighViewNews()
+
+function selectedField(event) {
+    const fieldValue = event.getAttribute('data-field-value')
+    const elements = document.querySelectorAll(`p[data-field-value="${fieldValue}"]`)
+    const difElements = document.querySelectorAll(`p[data-field-value]`)
+
+    difElements.forEach(el => {
+        el.style.color = ''
+    })
+    elements.forEach(el => {
+        el.style.color = 'rgb(255, 77, 0)'
+    })
+}
 
 
 

@@ -124,7 +124,7 @@
             }
 
             $.ajax({
-                url: '/comment',
+                url: '/comment/review-comment',
                 type: 'put',
                 beforeSend: (request) => {
                     request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));

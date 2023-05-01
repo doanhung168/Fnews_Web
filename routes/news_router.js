@@ -8,12 +8,12 @@ require('../middlewares/passport')
 const NewsController = require('../controller/NewsController');
 
 router
-    .put('/increase-news', NewsController.increaseView)
+    .put('/increase-views', NewsController.increaseView)
     .get('/get-high-view-news', NewsController.getHighViewNews)
     .get('/get-all', NewsController.getAllNews)
     .get('/my-news', passport.authenticate(Constraint.JWT, { session: false }), NewsController.getMyNews)
     .get('/:id', NewsController.getById)
-    .get('/', NewsController.get)
+    .get('/', NewsController.getNewsToShow)
     .post('/', passport.authenticate(Constraint.JWT, { session: false }), NewsController.add)
     .put('/', passport.authenticate(Constraint.JWT, { session: false }), NewsController.update)
     .put('/hideNews', passport.authenticate(Constraint.JWT, { session: false }), NewsController.hideNews)

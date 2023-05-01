@@ -1,7 +1,8 @@
 
 const ViewController = {
     home: (req, res) => {
-        res.render('home')
+        const {field} = req.query
+        res.render('home', {field})
     },
 
     register: (req, res) => {
@@ -83,6 +84,10 @@ const ViewController = {
 
     commentManagement : (req, res) => {
         res.render('admin_comment_management')
+    },
+
+    watchVideo: (req, res) => {
+        res.render('video-view', {id: req.params.id})
     }
 
 }

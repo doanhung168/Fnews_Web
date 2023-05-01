@@ -4,40 +4,22 @@ const UserController = require('./UserController')
 
 const NewsController = {
 
-    get: async (req, res) => {
+    getNewsToShow: async(req, res)  => {
         try {
-            let { page, per_page, field, active } = req.query
+            let { page, per_page, field } = req.query
+
             if (per_page == null) {
                 per_page = 10
             }
 
-            const skip = page * per_page
-            let news;
-            let totalItem;
-
-
-            if (field) {
-
-                if (active) {
-                    totalItem = await News.countDocuments({ field, active })
-                    news = await News.find({ field, active }).sort({ time: -1 }).skip(skip).limit(per_page)
-                } else {
-                    totalItem = await News.countDocuments({ field })
-                    news = await News.find({ field }).sort({ time: -1 }).skip(skip).limit(per_page)
-                }
-
-            } else {
-
-                if (active) {
-                    totalItem = await News.countDocuments({ active })
-                    news = await News.find().sort({ time: -1 }).skip(skip).limit(per_page)
-                } else {
-                    totalItem = await News.countDocuments()
-                    news = await News.find().sort({ time: -1 }).skip(skip).limit(per_page)
-                }
-
+            if(page == null) {
+                page = 0
             }
 
+            const skip = page * per_page
+
+            const totalItem = await News.countDocuments({ field, active: true, state: 1 })
+            const news = await News.find({ field, active: true, state: 1 }).sort({ time: -1 }).skip(skip).limit(per_page)
 
             return res.json({
                 success: true, message: null, data: {
@@ -46,15 +28,6 @@ const NewsController = {
                 }
             })
 
-        } catch (e) {
-            return res.json({ success: false, message: e.message, data: null })
-        }
-    },
-
-    getAllNews: async (req, res) => {
-        try {
-            const news = await News.find().sort({ created_time: -1 })
-            return res.json({ success: true, message: null, data: news })
         } catch (e) {
             return res.json({ success: false, message: e.message, data: null })
         }
@@ -168,11 +141,11 @@ const NewsController = {
 
     increaseView: async (req, res) => {
         try {
-            const news = await News.findById(req.body.id)
+            const news = await News.findById(req.body.newsId)
             if (news) {
                 news.view = news.view + 1;
                 await news.save()
-                return res.json({ success: true, message: null, data: news._id })
+                return res.json({ success: true, message: null, data: news.view })
             } else {
                 return res.json({ success: false, message: "Không tìm thấy bài viết", data: null })
             }
@@ -193,8 +166,7 @@ const NewsController = {
         } catch (e) {
             return res.json({ success: false, message: e.message, data: null })
         }
-    }
-
+    },
 
 
 

@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/bootstrap-5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/fontawesome/fontawesome-free-6.3.0-web/css/all.min.css">
+    <link rel="stylesheet" href="/stylesheets/home.css">
+    <title>Fnews</title>
+    <style>
+        .text {
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            text-overflow: ellipsis;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container d-flex flex-column">
+
+        <div class="container-fluid bg-light " style="z-index: 2;">
+            <div class="container">
+                <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                    <div class="container-fluid d-flex align-items-center">
+                        <a class="navbar-brand fw-bold" style="color: #ff6200;" href="/">FNEWS</a>
+                        <div class="d-flex justify-content-start flex-grow-1 ms-4 me-2 border-start ps-3"
+                            style="border-color: rgb(17, 17, 17);">
+                            <p id="time">Thứ 7, 13/4/2023</p>
+                            <div class="d-flex flex-grow-1 justify-content-end  me-5">
+                                <a href="#" class="text-dark"><i class="fa-solid fa-arrows-rotate"></i><span
+                                        class="ms-2">Làm mới</span></a>
+                            </div>
+                        </div>
+                        <form class="d-flex">
+                            <div class="input-group">
+                                <div class="form">
+                                    <input id="search-input" type="search" id="form1" class="form-control"
+                                        placeholder="Tìm kiếm" />
+                                </div>
+                                <button id="search-button" type="button" class="btn btn-primary">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </form>
+                        <div class="d-flex ms-4 position-relative " style="z-index: 2;">
+                            <i class="fas fa-user mt-1"></i>
+                            <a href="/login" class="ms-2 position-relative" style="display: block;" id="username">Đăng
+                                nhập</a>
+                            <div id="info-popup" class="d-flex flex-column"
+                                style="position: absolute; left: 0; top: 110%;z-index: 2;background: #fff; width: 200px; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); visibility: hidden;">
+                                <a href="/profile" class="my-2 px-2">Cá nhân</a>
+                                <a style="cursor: pointer;" id="logout" class="my-2 px-2">Đăng xuất</a>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+
+        <div class="d-flex my-5 overflow-auto" >
+            <div id="main-video" data-video-id="<%=id%>" class="w-75 m-auto" style="height: 550px;">
+                <iframe class="video-content m-auto" style="object-fit: cover;" width="100%" height="100%"
+                    src="https://www.youtube.com/embed/dSjaplLpRXQ" frameborder="0" allowfullscreen>
+                </iframe>
+                <p class="main-video-title"></p>
+                <div class="action d-flex align-items-center mt-3">
+                    <p class="me-5">Lượt xem: <span id="news-views">0</span></p>
+                    <i style="cursor: pointer;" class="fa-regular fa-share-from-square me-4"
+                        id="news-share-action" onclick="getShareLink(this)"></i>
+                    <i style="cursor: pointer;" class="fa-regular fa-comment me-4" id="news-comment-action"
+                        onclick="commentAction()"></i>
+                    <i style="cursor: pointer;" class="fa-regular fa-bookmark me-4" id="news-saved-action"
+                        data-saved-news="0" onclick="saveNews(this)"></i>
+                </div>
+            </div>
+            <div id="more-video my-5">
+
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="d-flex flex-column mt-4 mb-4">
+            <div class="w-100" style="height: 10px; background: #ececec;"></div>
+            <div class="d-flex justify-content-between mt-4">
+                <div class="d-flex flex-column">
+                    <a class="fw-bolder mb-1" href="#">Trang chủ</a>
+                    <a class="fw-bolder mb-1" href="#">Video</a>
+                </div>
+                <div class="d-flex flex-column">
+                    <a class="fw-bolder mb-1" href="#">Mới nhất</a>
+                    <a class="fw-bolder mb-1" href="#">Xem nhiều</a>
+                    <a class="fw-bolder mb-1" href="#">Tin nóng</a>
+                </div>
+                <div class="d-flex flex-column" id="field-footer">
+                    <a class="fw-bolder mb-1" href="#">Tiêu điểm</a>
+                    <a class="fw-bolder mb-1" href="#">Hoạt động</a>
+                    <a class="fw-bolder mb-1" href="#">Cuộc thi</a>
+                    <a class="fw-bolder mb-1" href="#">Tuyển sinh</a>
+                    <a class="fw-bolder mb-1" href="#">Thể thao</a>
+                    <a class="fw-bolder mb-1" href="#">Giao lưu</a>
+                </div>
+                <div class="d-flex flex-column w-25">
+                    <p>Tải ứng dụng</p>
+                    <a href="#" class="p-1 mt-2 mb-2"><i class="fa-solid fa-mobile me-2"></i>Fnews</a>
+                    <p>Liên hệ chúng tôi</p>
+                    <a href="#" class="p-1 mt-2 mb-2"><i class="fas fa-envelope me-2"></i>Tòa soạn</a>
+                    <a href="#" class="p-1 mt-2 mb-2"><i class="fas fa-ad me-2"></i>Liên hệ quảng cáo</a>
+                    <p>Đường dây nóng</p>
+                    <p href="#" class="p-1 mt-2 mb-2"><i class="fas fa-phone me-2"></i>1900 8282</p>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center border-top mt-2 pt-2 pb-2"
+                style="border-color: #232323;">
+                <p>Báo điện tử:
+                    <a class="navbar-brand fw-bold fs-6 m-0 p-0" style="color: rgb(254, 80, 6);" href="/"><span
+                            class="navbar-brand fw-bold fs-4 m-0" style="color: rgb(254, 80, 6);">F</span>NEWS</a>
+                </p>
+                <p>Theo dõi chúng tôi trên: <i class="fa-brands fa-facebook ms-2 me-2" style="color: #1842ff;"></i> <i
+                        class="fa-brands fa-youtube" style="color: red;"></i></p>
+            </div>
+            <div class="d-flex flex-row justify-content-between border-top pt-3" style="border-color: #232323;">
+                <div class="d-flex flex-column">
+                    <p>Tổng biên tập: Phạm Hiếu</p>
+                    <p>Địa chỉ: Tầng 10, Tòa A FPT Tower, số 10 Phạm Văn Bạch, Dịch Vọng, Cầu Giấy, Hà Nội</p>
+                    <p>Điện thoại: 024 7300 8899 - máy lẻ 4500</p>
+                </div>
+                <p>© 1997-2023. Toàn bộ bản quyền thuộc Fnews</p>
+            </div>
+        </div>
+
+        <!-- up arow -->
+        <a href="#" class="position-fixed p-2 border border-1 border-success"
+            style="bottom: 30px; right: 30px; border-radius: 10%;">
+            <i class="fa-solid fa-circle-up fa-square-up" style="color: green;"></i>
+        </a>
+
+    </div>
+
+    <script src="/javascripts/jquery.js"></script>
+    <script src="/bootstrap-5/js/bootstrap.min.js"></script>
+
+    <script>
+        function getTime() {
+            var today = new Date();
+            var day_name;
+            switch (today.getDay()) {
+                case 0:
+                    day_name = "Chủ nhật";
+                    break;
+                case 1:
+                    day_name = "Thứ hai";
+                    break;
+                case 2:
+                    day_name = "Thứ ba";
+                    break;
+                case 3:
+                    day_name = "Thứ tư";
+                    break;
+                case 4:
+                    day_name = "Thứ năm";
+                    break;
+                case 5:
+                    day_name = "Thứ sau";
+                    break;
+                case 6:
+                    day_name = "Thứ bảy";
+            }
+
+            return day_name + ', ' + today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear();
+        }
+
+        function getCookie(name) {
+            function escape(s) { return s.replace(/([.*+?\^$(){}|\[\]\/\\])/g, '\\$1'); }
+            var match = document.cookie.match(RegExp('(?:^|;\\s*)' + escape(name) + '=([^;]*)'));
+            return match ? match[1] : null;
+        }
+
+        function delete_cookie(name) {
+            document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        }
+
+        function loadUserData() {
+            $.ajax({
+                url: 'http://localhost:3000/auth/auto-login',
+                beforeSend: function (request) {
+                    console.log("Bearer " + getCookie("Authorization"))
+                    request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
+                },
+                type: 'POST',
+                data: {},
+                success: (data, textStatus, request) => {
+                    if (data.success === true) {
+                        $('#username').text(data.data.display_name)
+                        $('#username').removeAttr('href')
+                        $('#username').mouseenter(function () {
+                            const popup = document.getElementById('info-popup');
+                            if (popup.style.visibility === 'hidden') {
+                                popup.style.visibility = 'visible'
+                            } else {
+                                popup.style.visibility = 'hidden'
+                            }
+                        })
+                    }
+                },
+                error: (request, status, err) => {
+                    console.log(status + err)
+                }
+
+            });
+        }
+
+        function extracTime(timestamp) {
+            let timeAgo = Date.now() - timestamp;
+            let minute = 60 * 1000;
+            let hour = minute * 60;
+            let day = hour * 24;
+
+            let minutesAgo = Math.floor(timeAgo / minute);
+            let hoursAgo = Math.floor(timeAgo / hour);
+            let daysAgo = Math.floor(timeAgo / day);
+
+            if (daysAgo > 0) {
+                return `${daysAgo} ngày trước`
+            } else if (hoursAgo > 0) {
+                return `${hoursAgo} giờ trước`
+            } else if (minutesAgo > 0) {
+                return `${minutesAgo} phút trước`
+            } else {
+                return 'Vừa xong'
+            }
+        }
+
+        // call
+        $(document).ready(() => {
+            loadUserData()
+
+        });
+
+        $("#time").text(getTime())
+
+        $("#logout").click(() => {
+            if (confirm("Bạn có muốn đăng xuất?") === true) {
+                delete_cookie('Authorization')
+                window.location.reload();
+            }
+        })
+
+    </script>
+
+    <script>
+
+        function getCookie(name) {
+            function escape(s) { return s.replace(/([.*+?\^$(){}|\[\]\/\\])/g, '\\$1'); }
+            var match = document.cookie.match(RegExp('(?:^|;\\s*)' + escape(name) + '=([^;]*)'));
+            return match ? match[1] : null;
+        }
+
+        function extracTime(timestamp) {
+            let timeAgo = Date.now() - timestamp;
+            let minute = 60 * 1000;
+            let hour = minute * 60;
+            let day = hour * 24;
+
+            let minutesAgo = Math.floor(timeAgo / minute);
+            let hoursAgo = Math.floor(timeAgo / hour);
+            let daysAgo = Math.floor(timeAgo / day);
+
+            if (daysAgo > 0) {
+                return `${daysAgo} ngày trước`
+            } else if (hoursAgo > 0) {
+                return `${hoursAgo} giờ trước`
+            } else if (minutesAgo > 0) {
+                return `${minutesAgo} phút trước`
+            } else {
+                return 'Vừa xong'
+            }
+        }
+
+        function getMainVideo() {
+            
+        }
+
+        function increaseViewOfVideo() {
+            $.ajax({
+                url: '/news/increase-views',
+                type: 'put',
+                data: { newsId: $('#news-id').val() },
+                success: (data) => {
+                    if (data.success) {
+                        $('#news-views').text(data.data)
+                    } else {
+                        console.log(data.message)
+                    }
+                }
+            })
+        }
+
+        function setSeenVideos() {
+            $.ajax({
+                url: '/user/seen-news',
+                type: 'put',
+                data: { newsId: $('#news-id').val() },
+                beforeSend: function (request) {
+                    request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
+                },
+                success: (data) => {
+                    if (data.success) {
+                        console.log("update success")
+                    } else {
+                        console.log(data.message)
+                    }
+                }
+            })
+        }
+
+        // let intervalID1 = setTimeout(setSeenNews, 1000);
+        // let intervalID2 = setTimeout(increaseView, 5000);
+
+        window.addEventListener('beforeunload', function (e) {
+            clearInterval(intervalID1)
+            clearInterval(intervalID2)
+        });
+
+
+        function getSavedVideo() {
+            const id = $('#news-id').val()
+            $.ajax({
+                url: '/user/saved-news?news_id=' + id,
+                type: 'get',
+                beforeSend: function (request) {
+                    request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
+                },
+                success: (data) => {
+                    console.log("get saved news: " + data.data)
+                    if (data.success) {
+                        if (data.data == true) {
+                            $('#news-saved-action').removeClass('fa-regular').addClass('fa-solid')
+                            $('#news-saved-action').css('color', '#e67a00')
+                            $('#news-saved-action').attr('data-saved-news', 1)
+                        }
+                    }
+                },
+                error: (req, sts, err) => {
+                    console.log(err)
+                }
+            })
+        }
+
+        function savedVideo(event) {
+            const saved = $(event).attr('data-saved-news') == 1
+            console.log('input saved news: ' + !saved)
+            $.ajax({
+                url: '/user/saved-news',
+                type: 'put',
+                data: { saved: !saved, news_id: $('#news-id').val() },
+                beforeSend: function (request) {
+                    request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
+                },
+                success: (data) => {
+                    console.log('saved news: ' + data.data)
+                    if (data.success) {
+                        if (data.data == true) {
+                            $('#news-saved-action').removeClass('fa-regular').addClass('fa-solid')
+                            $('#news-saved-action').css('color', '#e67a00')
+                            $('#news-saved-action').attr('data-saved-news', 1)
+                        } else {
+                            $('#news-saved-action').addClass('fa-regular').removeClass('fa-solid')
+                            $('#news-saved-action').css('color', '')
+                            $('#news-saved-action').attr('data-saved-news', 0)
+                        }
+                    }
+                }
+            })
+        }
+
+        function getShareLink(event) {
+            $(event).css('color', '#e67a00')
+            setTimeout(function () {
+                $(event).css('color', '')
+            }, 500);
+            navigator.permissions.query({ name: 'clipboard-write' }).then(result => {
+                if (result.state === 'granted' || result.state === 'prompt') {
+                    // Lấy thông tin cần sao chép
+                    const textToCopy = 'http://localhost:3000/news-view/' + $('#news-id').val();
+
+                    // Sao chép thông tin vào bộ nhớ đệm
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        console.log('Đã sao chép nội dung vào bộ nhớ đệm');
+                    }).catch(error => {
+                        console.error('Lỗi khi sao chép nội dung vào bộ nhớ đệm:', error);
+                    });
+                }
+            });
+        }
+
+    </script>
+
+
+</body>
+
+</html>

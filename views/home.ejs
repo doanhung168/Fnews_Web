@@ -70,6 +70,7 @@
         </div>
         <!-- Content -->
         <div class="container d-flex flex-column mt-4 ps-0 pe-0">
+            <input type="hidden" id="field" value="<%=field%>">
             <!-- News -->
             <div class="d-flex pt-4 border-top" style="width: 100%; border-color: #232323;">
                 <!-- Left -->
@@ -122,7 +123,7 @@
                     style="border-color: #232323;">
                     <a class="fs-5 fw-bolder"
                         style="font-family: 'Times New Roman', Times, serif; color: rgb(255, 77, 0);">VIDEO</a>
-                    <a href="/video-view-more">Xem thêm (<span id="total-video">11</span>&#160;videos)</a>
+                    <a href="/video-view-more">Xem thêm (<span id="total-video">0</span>&#160;videos)</a>
                 </div>
                 <!-- Above -->
                 <div class="d-flex">
@@ -130,8 +131,7 @@
                         <iframe id="video-content" style="object-fit: cover; position: absolute;" width="100%"
                             height="100%" src=""></iframe>
                         <a id="video-main" class="fs-5 text"
-                            style="position: absolute; bottom: 20px; left: 50px; color: #fff;-webkit-line-clamp: 1; line-clamp: 1;">
-                            Nhiều xe chạy vào cao tốc đang thi công</a>
+                            style="position: absolute; bottom: 20px; left: 50px; color: #fff;-webkit-line-clamp: 1; line-clamp: 1;"></a>
                     </div>
                     <div class="d-flex w-50 ms-4 " id="extra-videos">
 

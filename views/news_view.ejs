@@ -79,30 +79,43 @@
                     <p id="news-title" class="fs-4 my-3 fw-bold"></p>
                     <div id="news-content"></div>
                     <div id="action" class="d-flex align-items-center mt-4">
-                        <i class="fa-regular fa-share-from-square me-4" id="news-share-action"></i>
-                        <i class="fa-regular fa-comment me-4" id="news-comment-action" onclick="commentAction()"></i>
-                        <i class="fa-regular fa-bookmark me-4" id="news-saved-action"></i>
+                        <p class="me-5">Lượt xem: <span id="news-views"></span></p>
+                        <i style="cursor: pointer;" class="fa-regular fa-share-from-square me-4 btn active"
+                            id="news-share-action" onclick="getShareLink(this)"></i>
+                        <i style="cursor: pointer;" class="fa-regular fa-comment me-4" id="news-comment-action"
+                            onclick="commentAction()"></i>
+                        <i style="cursor: pointer;" class="fa-regular fa-bookmark me-4" id="news-saved-action"
+                            data-saved-news="0" onclick="saveNews(this)"></i>
                     </div>
                     <div id="comment-part" class="mt-4">
 
                         <div id="comment-text-part" style="display: none;">
-                            <label for="comment-content" class="form-label fw-bolder">Ý kiến</label>
                             <input type="text" class="form-control" id="comment-content"
                                 placeholder="Nhập ý kiến của bạn...">
                             <button class="btn btn-success my-2 px-4" onclick="sendComment('0')"
                                 id="comment-sent">Gửi</button>
                         </div>
-                        <div id="comment-list">
 
+                        <div class="mt-4">
+                            <h5>Ý Kiến (<span id="number-of-comment">0</span>)</h5>
+                            <div class="d-flex flex-start my-3">
+                                <p class="border-bottom fw-bold" style="border: #ff6200; color: #ff6200;">Quan tâm nhất
+                                </p>
+                                <p class="ms-3 fw-bold" style="border-color: #232323;">Mới nhất</p>
+                            </div>
+                            <div id="comment-list" class="mt-3">
+
+                            </div>
                         </div>
+
                     </div>
                 </div>
 
                 <div class="ps-3 w-25">
                     <div class="d-flex flex-column border-start border-1 ps-4 ms-3" style="border: #232323;">
                         <a href="#" class="fs-5 mb-4 fw-bolder"
-                            style="font-family: 'Times New Roman', Times, serif; text-decoration: underline; color: rgb(255, 77, 0);">XEM
-                            NHIỀU NHẤT</a>
+                            style="font-family: 'Times New Roman', Times, serif; text-decoration: underline; color: rgb(255, 77, 0);">BÀI
+                            VIẾT LIÊN QUAN</a>
                         <div id="high-view-news">
 
                         </div>
@@ -173,7 +186,118 @@
 
     <script src="/javascripts/jquery.js"></script>
     <script src="/bootstrap-5/js/bootstrap.min.js"></script>
+
     <script>
+        function getTime() {
+            var today = new Date();
+            var day_name;
+            switch (today.getDay()) {
+                case 0:
+                    day_name = "Chủ nhật";
+                    break;
+                case 1:
+                    day_name = "Thứ hai";
+                    break;
+                case 2:
+                    day_name = "Thứ ba";
+                    break;
+                case 3:
+                    day_name = "Thứ tư";
+                    break;
+                case 4:
+                    day_name = "Thứ năm";
+                    break;
+                case 5:
+                    day_name = "Thứ sau";
+                    break;
+                case 6:
+                    day_name = "Thứ bảy";
+            }
+
+            return day_name + ', ' + today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear();
+        }
+
+        function getCookie(name) {
+            function escape(s) { return s.replace(/([.*+?\^$(){}|\[\]\/\\])/g, '\\$1'); }
+            var match = document.cookie.match(RegExp('(?:^|;\\s*)' + escape(name) + '=([^;]*)'));
+            return match ? match[1] : null;
+        }
+
+        function delete_cookie(name) {
+            document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        }
+
+        function loadUserData() {
+            $.ajax({
+                url: 'http://localhost:3000/auth/auto-login',
+                beforeSend: function (request) {
+                    console.log("Bearer " + getCookie("Authorization"))
+                    request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
+                },
+                type: 'POST',
+                data: {},
+                success: (data, textStatus, request) => {
+                    if (data.success === true) {
+                        $('#username').text(data.data.display_name)
+                        $('#username').removeAttr('href')
+                        $('#username').mouseenter(function () {
+                            const popup = document.getElementById('info-popup');
+                            if (popup.style.visibility === 'hidden') {
+                                popup.style.visibility = 'visible'
+                            } else {
+                                popup.style.visibility = 'hidden'
+                            }
+                        })
+                    }
+                },
+                error: (request, status, err) => {
+                    console.log(status + err)
+                }
+
+            });
+        }
+
+        function extracTime(timestamp) {
+            let timeAgo = Date.now() - timestamp;
+            let minute = 60 * 1000;
+            let hour = minute * 60;
+            let day = hour * 24;
+
+            let minutesAgo = Math.floor(timeAgo / minute);
+            let hoursAgo = Math.floor(timeAgo / hour);
+            let daysAgo = Math.floor(timeAgo / day);
+
+            if (daysAgo > 0) {
+                return `${daysAgo} ngày trước`
+            } else if (hoursAgo > 0) {
+                return `${hoursAgo} giờ trước`
+            } else if (minutesAgo > 0) {
+                return `${minutesAgo} phút trước`
+            } else {
+                return 'Vừa xong'
+            }
+        }
+
+        // call
+        $(document).ready(() => {
+            loadUserData()
+
+        });
+
+        $("#time").text(getTime())
+
+        $("#logout").click(() => {
+            if (confirm("Bạn có muốn đăng xuất?") === true) {
+                delete_cookie('Authorization')
+                window.location.reload();
+            }
+        })
+
+    </script>
+
+    <script>
+
+        let likedComments;
 
         function loadField() {
             $.ajax({
@@ -188,14 +312,46 @@
                         data.data.forEach(element => {
                             $('#field-list').append(
                                 `<li>
-                            <a href="/news-view/${element._id}">${element.value}</a>
+                            <a href="/?field=${element._id}" data-field-id="${element._id}">${element.value}</a>
                         </li>`
                             )
 
                             $('#field-footer').append(
-                                `<a href="/news-view/${element._id} class="fw-bolder mb-3" style="font-weight: bold;">${element.value}</a>`
+                                `<a href="/?field=${element._id}" class="fw-bolder mb-3" style="font-weight: bold;">${element.value}</a>`
                             )
                         });
+                        $.ajax({
+                            url: `/news/${$('#news-id').val()}`,
+                            type: 'GET',
+                            success: (data) => {
+                                if (data.success) {
+                                    if (data.data.state == 1 && data.data.active == true) {
+                                        $('#inform-state').hide()
+                                        $('#news-title').text(data.data.title)
+                                        $("#news-content").html(data.data.content)
+                                        $('#news-views').text(data.data.view)
+                                        var elements = document.querySelectorAll(`a[data-field-id="${data.data.field._id}"]`);
+                                        elements.forEach(el => {
+                                            el.style.color = 'rgb(255, 77, 0)'
+                                        })
+                                        loadRelativeNews(data.data.field._id)
+                                    } else {
+                                        $('#inform-state').show()
+                                        $('#news-title').text("")
+                                        $("#news-content").html("")
+                                        $('#action').addClass('d-none')
+                                        $('#comment-part').addClass('d-none')
+                                    }
+                                } else {
+                                    console.log(data.message)
+                                    $('#inform-state').show()
+                                    $('#news-title').text("")
+                                    $("#news-content").html("")
+                                    $('#action').addClass('d-none')
+                                    $('#comment-part').addClass('d-none')
+                                }
+                            }
+                        })
                     }
                 },
             });
@@ -203,37 +359,18 @@
 
         loadField()
 
-        $.ajax({
-            url: `/news/${$('#news-id').val()}`,
-            type: 'GET',
-            success: (data) => {
-                if (data.success) {
-                    if (data.data.state == 1 && data.data.active == true) {
-                        $('#inform-state').hide()
-                        $('#news-title').text(data.data.title)
-                        $("#news-content").html(data.data.content)
-                    } else {
-                        $('#inform-state').show()
-                        $('#news-title').text("")
-                        $("#news-content").html("")
-                    }
-                } else {
-                    console.log(data.message)
-                }
-            }
-        })
-
-        function loadHighViewNews() {
+        function loadRelativeNews(currentField) {
             $.ajax({
-                url: '/news/get-high-view-news?limit=4',
+                url: `/news?field=${currentField}&page=0&per_page=7`,
                 dataType: 'json',
                 type: 'GET',
                 success: function (data) {
                     if (data.success) {
                         $('#high-view-news').empty()
-                        data.data.forEach(el => {
-                            $('#high-view-news').append(
-                                `<div href="#" class="d-flex pt-2 mb-3 me-2" style="width: 100%;">
+                        data.data.news.forEach(el => {
+                            if (el._id != $('#news-id').val()) {
+                                $('#high-view-news').append(
+                                    `<div href="#" class="d-flex pt-2 mb-3 me-2" style="width: 100%;">
                                     <div style="width: 45%;">
                                     <img style="object-fit: cover;" height="80px" width="100%" src="/${el.avatar}" />
                                 </div>
@@ -244,14 +381,13 @@
                                     </a>
                                 </div>
                                 </div>`
-                            )
+                                )
+                            }
                         })
                     }
                 },
             });
         }
-
-        loadHighViewNews()
 
         function getCookie(name) {
             function escape(s) { return s.replace(/([.*+?\^$(){}|\[\]\/\\])/g, '\\$1'); }
@@ -259,17 +395,109 @@
             return match ? match[1] : null;
         }
 
-        function shareAction() {
-
-        }
-
         function commentAction() {
             if (getCookie("Authorization")) {
                 $('#comment-text-part').toggle()
             } else {
-                window.location.assign = "/login"
+                alert("Bạn cần đăng nhập trước!")
             }
         }
+
+        function extracTime(timestamp) {
+            let timeAgo = Date.now() - timestamp;
+            let minute = 60 * 1000;
+            let hour = minute * 60;
+            let day = hour * 24;
+
+            let minutesAgo = Math.floor(timeAgo / minute);
+            let hoursAgo = Math.floor(timeAgo / hour);
+            let daysAgo = Math.floor(timeAgo / day);
+
+            if (daysAgo > 0) {
+                return `${daysAgo} ngày trước`
+            } else if (hoursAgo > 0) {
+                return `${hoursAgo} giờ trước`
+            } else if (minutesAgo > 0) {
+                return `${minutesAgo} phút trước`
+            } else {
+                return 'Vừa xong'
+            }
+        }
+
+        function displayComment(url) {
+            $.ajax({
+                url: url,
+                type: 'get',
+                success: (data) => {
+                    if (data.success) {
+                        $('#number-of-comment').text(data.data.length)
+                        $('#comment-list').empty()
+                        data.data.forEach((element) => {
+                            const liked = likedComments.includes(element._id)
+                            $('#comment-list').append(
+                                `<div class="d-flex my-3" data-comment-id="${element._id}">
+
+                                        <div class="justify-content-center align-items-center"
+                                            style="width: 35px; height: 35px; ${element.owner.avatar == null ? 'display: none;' : 'display:flex'}">
+                                            <img src="${element.owner.avatar}" width="35" height="35">
+                                        </div>
+
+                                        <div class="justify-content-center align-items-center rounded-circle"
+                                            style="width: 35px; height: 35px; background-color: #eee; ${element.owner.avatar != null ? 'display: none;' : 'display: flex'}">
+                                            <div class="text-uppercase text-center" style="font-size: 20px; color: #333;">
+                                                ${element.owner.display_name.substring(0, 1)}
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex flex-column ms-3">
+                                            <p><span id="display-name" class="fw-bold">${element.owner.display_name}</span><span id="comment-content" class="ms-3">${element.content}</span></p>
+                                            <div class="d-flex mt-2" id="${element._id}">
+                                                <p onclick="likeComment(this)" class="like-btn" data-liked="${liked}" style="cursor: pointer;${liked ? 'color: rgb(254, 80, 6);' : ''}"><i class="fa-regular fa-thumbs-up like-icon" style="cursor: pointer;${liked ? 'color: rgb(254, 80, 6);' : ''}"></i> Thích</p>
+                                                <p class="ms-3"><i class="fa-regular fa-thumbs-up"></i><span
+                                                    id="comment-like" class="ms-2">${element.like}</span></p>
+                                                <p class="ms-3 text-dark" style="cursor: pointer;" onclick="reply(this)">Trả lời</p>
+                                                <p class="ms-3 text-dark">${extracTime(element.time)}</p>
+                                            </div>
+                                            <div id="reply-form" class="d-none flex-column bg-light p-2 mt-3" style="width:500px">
+                                                <input type="text" id="reply-content" class="form-control mb-3" placeholder="Nhập bình luận của bạn..."/>
+                                                <div class="d-flex mb-2">
+                                                    <button onclick="sendReply(this)" class="btn btn-success" style="width:100px">Gửi</button>
+                                                    <button onclick="closeReply(this)" class="btn btn-danger ms-3" style="width:100px">Đóng</button>
+                                                </div>
+                                            </div>
+                                            <div id="reply-action" onclick="getChildrentComment(this)" data-reply-action="0" data-reply-action-comment-id="${element._id}"  class="align-items-center mt-3" style="cursor: pointer;${element.childrent_comment.length == 0 ? 'display: none;' : 'display: flex;'}">
+                                                <i class="fa-solid fa-reply fa-rotate-180"></i>
+                                                <p class="ms-1"><span>${element.childrent_comment.length}</span> trả lời</p>
+                                            </div>
+                                            <div id="childrent-comments">
+
+                                            </div>
+                                        </div>
+                                    </div>`
+                            )
+                        })
+
+                    } else {
+                        console.log(data.message)
+                    }
+                }
+            })
+        }
+
+        $.ajax({
+            url: '/user/liked-comments',
+            type: 'get',
+            beforeSend: function (request) {
+                request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
+            },
+            success: (data) => {
+                if (data.success) {
+                    likedComments = data.data
+                    displayComment("/comment/get-comment-to-show?getType=0&target=" + $('#news-id').val())
+                }
+            }
+        })
+
 
         function sendComment(targetType) {
             content = $('#comment-content').val()
@@ -300,7 +528,294 @@
             }
         }
 
+        function likeComment(event) {
+            const liked = event.dataset.liked === 'true'
+            const comment_id = event.parentElement.id
+            const likeBtn = event.parentElement.querySelector('.like-btn')
+            const likeIcon = event.parentElement.querySelector('.like-icon')
+            const likeNumber = event.parentElement.querySelector('#comment-like')
+            if (liked) {
+                console.log('go to unlike')
+                $.ajax({
+                    url: '/comment/unlike',
+                    type: 'put',
+                    data: { comment_id: comment_id },
+                    beforeSend: function (request) {
+                        request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
+                    },
+                    success: (data) => {
+                        if (data.success) {
+                            likeNumber.innerText = data.data
+                            event.dataset.liked = 'false'
+                            likeBtn.style.color = ''
+                            likeIcon.style.color = ''
+                        } else {
+                            console.log(data.message)
+                        }
+                    }
 
+                })
+            } else {
+                console.log('go to like')
+                $.ajax({
+                    url: '/comment/like',
+                    type: 'put',
+                    data: { comment_id: comment_id },
+                    beforeSend: function (request) {
+                        request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
+                    },
+                    success: (data) => {
+                        if (data.success) {
+                            likeNumber.innerText = data.data
+                            event.dataset.liked = 'true'
+                            likeBtn.style.color = "rgb(254, 80, 6)"
+                            likeIcon.style.color = 'rgb(254, 80, 6)'
+                        } else {
+                            console.log(data.message)
+                        }
+                    },
+                    error: (req, sts, err) => {
+                        console.log(err)
+                    }
+                })
+            }
+
+        }
+
+        function increaseView() {
+            $.ajax({
+                url: '/news/increase-views',
+                type: 'put',
+                data: { newsId: $('#news-id').val() },
+                success: (data) => {
+                    if (data.success) {
+                        $('#news-views').text(data.data)
+                    } else {
+                        console.log(data.message)
+                    }
+                }
+            })
+        }
+
+        function setSeenNews() {
+            $.ajax({
+                url: '/user/seen-news',
+                type: 'put',
+                data: { newsId: $('#news-id').val() },
+                beforeSend: function (request) {
+                    request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
+                },
+                success: (data) => {
+                    if (data.success) {
+                        console.log("update success")
+                    } else {
+                        console.log(data.message)
+                    }
+                }
+            })
+        }
+
+        let intervalID1 = setTimeout(setSeenNews, 1000);
+        let intervalID2 = setTimeout(increaseView, 5000);
+
+        window.addEventListener('beforeunload', function (e) {
+            clearInterval(intervalID1)
+            clearInterval(intervalID2)
+        });
+
+        function reply(event) {
+            if (getCookie("Authorization")) {
+                const parent = event.parentElement.parentElement
+                const replyForm = parent.querySelector('#reply-form')
+                if (replyForm.classList.contains("d-none")) {
+                    replyForm.classList.replace('d-none', 'd-flex')
+                } else {
+                    replyForm.classList.replace('d-flex', 'd-none')
+                }
+            } else {
+                alert("Bạn cần đăng nhập trước!")
+            }
+        }
+
+        function closeReply(event) {
+            const parent = event.parentElement.parentElement.parentElement
+            const replyForm = parent.querySelector('#reply-form')
+            replyForm.classList.replace('d-flex', 'd-none')
+        }
+
+        function sendReply(event) {
+            const replyForm = event.parentElement.parentElement.parentElement.querySelector('#reply-form')
+            const parent = event.parentElement.parentElement.parentElement.parentElement
+            const target = parent.getAttribute('data-comment-id')
+            const commentContent = event.parentElement.parentElement.querySelector('#reply-content').value
+            const target_type = 1 //comment
+
+            console.log(commentContent)
+            if (commentContent == null || commentContent == '') {
+                alert("Vui lòng nhập nội dung trước khi gửi")
+                return
+            }
+
+            $.ajax({
+                url: '/comment/',
+                type: 'post',
+                data: { content: commentContent, target: target, target_type: target_type },
+                beforeSend: function (request) {
+                    request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
+                },
+                success: (data) => {
+                    if (data.success) {
+                        replyForm.classList.replace('d-flex', 'd-none')
+                        alert('Bình luận thành công.\nVui lòng chờ phê duyệt')
+                    } else {
+                        console.log(data.message)
+                    }
+                }
+            })
+
+        }
+
+        function getChildrentComment(event) {
+            const close = $(event).attr('data-reply-action') == 0
+            if (close) {
+                $(event).attr('data-reply-action', 1)
+                const commentId = event.getAttribute('data-reply-action-comment-id')
+                const childrentComments = event.parentElement.querySelector('#childrent-comments')
+                $.ajax({
+                    url: '/comment/get-childrent-comment?id=' + commentId,
+                    type: 'get',
+                    success: (data) => {
+                        console.log(data)
+                        if (data.success) {
+                            console.log(data.data)
+                            $(childrentComments).empty()
+                            data.data.forEach(element => {
+                                const liked = likedComments.includes(element._id)
+                                $(childrentComments).append(
+                                    `<div class="d-flex my-3" data-comment-id="${element._id}">
+
+                                    <div class="justify-content-center align-items-center"
+                                        style="width: 35px; height: 35px; ${element.owner.avatar == null ? 'display: none;' : 'display:flex'}">
+                                        <img src="${element.owner.avatar}" width="35" height="35">
+                                    </div>
+
+                                    <div class="justify-content-center align-items-center rounded-circle"
+                                        style="width: 35px; height: 35px; background-color: #eee; ${element.owner.avatar != null ? 'display: none;' : 'display: flex'}">
+                                        <div class="text-uppercase text-center" style="font-size: 20px; color: #333;">
+                                            ${element.owner.display_name.substring(0, 1)}
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex flex-column ms-3">
+                                        <p><span id="display-name" class="fw-bold">${element.owner.display_name}</span><span id="comment-content" class="ms-3">${element.content}</span></p>
+                                        <div class="d-flex mt-2" id="${element._id}">
+                                            <p onclick="likeComment(this)" class="like-btn" data-liked="${liked}" style="cursor: pointer;${liked ? 'color: rgb(254, 80, 6);' : ''}"><i class="fa-regular fa-thumbs-up like-icon" style="cursor: pointer;${liked ? 'color: rgb(254, 80, 6);' : ''}"></i> Thích</p>
+                                            <p class="ms-3"><i class="fa-regular fa-thumbs-up"></i><span
+                                                id="comment-like" class="ms-2">${element.like}</span></p>
+                                            <p class="ms-3 text-dark" style="cursor: pointer;" onclick="reply(this)">Trả lời</p>
+                                            <p class="ms-3 text-dark">${extracTime(element.time)}</p>
+                                        </div>
+                                        <div id="reply-form" class="d-none flex-column bg-light p-2 mt-3" style="width:500px">
+                                            <input type="text" id="reply-content" class="form-control mb-3" placeholder="Nhập bình luận của bạn..." />
+                                            <div class="d-flex mb-2">
+                                                <button onclick="sendReply(this)" class="btn btn-success" style="width:100px">Gửi</button>
+                                                <button onclick="closeReply(this)" class="btn btn-danger ms-3" style="width:100px">Đóng</button>
+                                            </div>
+                                        </div>
+                                        <div id="reply-action" onclick="getChildrentComment(this)" data-reply-action-comment-id="${element._id}" class="align-items-center mt-3" style="cursor: pointer;${element.childrent_comment.length == 0 ? 'display: none;' : 'display: flex;'}">
+                                            <i class="fa-solid fa-reply fa-rotate-180"></i>
+                                            <p class="ms-1"><span>${element.childrent_comment.length}</span> trả lời</p>
+                                        </div>
+                                        <div id="childrent-comments">
+
+                                        </div>
+                                    </div>
+                                </div>`
+                                )
+                            })
+                        } else {
+                            console.log(data.message)
+                        }
+                    }
+                })
+            } else {
+                $(event).attr('data-reply-action', 0)
+                const childrentComments = event.parentElement.querySelector('#childrent-comments')
+                $(childrentComments).empty()
+            }
+        }
+
+        function getSavedNews() {
+            const id = $('#news-id').val()
+            $.ajax({
+                url: '/user/saved-news?news_id=' + id,
+                type: 'get',
+                beforeSend: function (request) {
+                    request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
+                },
+                success: (data) => {
+                    console.log("get saved news: " + data.data)
+                    if (data.success) {
+                        if (data.data == true) {
+                            $('#news-saved-action').removeClass('fa-regular').addClass('fa-solid')
+                            $('#news-saved-action').css('color', '#e67a00')
+                            $('#news-saved-action').attr('data-saved-news', 1)
+                        }
+                    }
+                },
+                error: (req, sts, err) => {
+                    console.log(err)
+                }
+            })
+        }
+        getSavedNews()
+
+        function saveNews(event) {
+            const saved = $(event).attr('data-saved-news') == 1
+            console.log('input saved news: ' + !saved)
+            $.ajax({
+                url: '/user/saved-news',
+                type: 'put',
+                data: { saved: !saved, news_id: $('#news-id').val() },
+                beforeSend: function (request) {
+                    request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
+                },
+                success: (data) => {
+                    console.log('saved news: ' + data.data)
+                    if (data.success) {
+                        if (data.data == true) {
+                            $('#news-saved-action').removeClass('fa-regular').addClass('fa-solid')
+                            $('#news-saved-action').css('color', '#e67a00')
+                            $('#news-saved-action').attr('data-saved-news', 1)
+                        } else {
+                            $('#news-saved-action').addClass('fa-regular').removeClass('fa-solid')
+                            $('#news-saved-action').css('color', '')
+                            $('#news-saved-action').attr('data-saved-news', 0)
+                        }
+                    }
+                }
+            })
+        }
+
+        function getShareLink(event) {
+            $(event).css('color', '#e67a00')
+            setTimeout(function () {
+                $(event).css('color', '')
+            }, 500);
+            navigator.permissions.query({ name: 'clipboard-write' }).then(result => {
+                if (result.state === 'granted' || result.state === 'prompt') {
+                    // Lấy thông tin cần sao chép
+                    const textToCopy = 'http://localhost:3000/news-view/' + $('#news-id').val();
+
+                    // Sao chép thông tin vào bộ nhớ đệm
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        console.log('Đã sao chép nội dung vào bộ nhớ đệm');
+                    }).catch(error => {
+                        console.error('Lỗi khi sao chép nội dung vào bộ nhớ đệm:', error);
+                    });
+                }
+            });
+        }
 
     </script>
 
