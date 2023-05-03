@@ -210,10 +210,10 @@ function fillVideos(res) {
                 `<div class="d-flex w-50 flex-column pt-4">
                     <img style="object-fit: cover;" height="150px" width="100%"
                         src="https://img.youtube.com/vi/${content}/mqdefault.jpg" />
-                    <p class="fw-bolder fs-5 text mt-2"
+                    <a href="/video-view/${res.data.videos[i]._id}" class="fw-bolder fs-5 text mt-2"
                         style="font-family: 'Times New Roman', Times, serif; -webkit-line-clamp: 2; line-clamp: 2;">
                         ${res.data.videos[i].title}
-                    </p>
+                    </a>
                     <p class="mt-2"><i class="far fa-clock"></i><span class="ms-2">${extracTime(res.data.videos[i].time)}</span></p>
                 </div>`)
         } else if (i == 2) {
@@ -222,10 +222,10 @@ function fillVideos(res) {
                 `<div class="d-flex w-50 flex-column pt-4 ms-4">
                     <img style="object-fit: cover;" height="150px" width="100%"
                         src="https://img.youtube.com/vi/${content}/mqdefault.jpg" />
-                    <p class="fw-bolder fs-5 text mt-2"
+                    <a href="/video-view/${res.data.videos[i]._id}" class="fw-bolder fs-5 text mt-2"
                         style="font-family: 'Times New Roman', Times, serif; -webkit-line-clamp: 2; line-clamp: 2;">
                         ${res.data.videos[i].title}
-                    </p>
+                    </a>
                     <p class="mt-2"><i class="far fa-clock"></i><span class="ms-2">${extracTime(res.data.videos[i].time)}</span></p>
                 </div>`)
         } else if (i == 3) {
@@ -234,10 +234,10 @@ function fillVideos(res) {
                 ` <div class="d-flex w-25 flex-column">
                     <img style="object-fit: cover;" height="150px" width="100%"
                         src="https://img.youtube.com/vi/${content}/mqdefault.jpg" />
-                    <p class="fw-bolder fs-5 text mt-2"
+                    <a href="/video-view/${res.data.videos[i]._id}"  class="fw-bolder fs-5 text mt-2"
                         style="font-family: 'Times New Roman', Times, serif; -webkit-line-clamp: 2; line-clamp: 2;">
                         ${res.data.videos[i].title}
-                    </p>
+                    </a>
                     <p class="mt-2"><i class="far fa-clock"></i><span class="ms-2">${extracTime(res.data.videos[i].time)}</span></p>
                 </div>`)
         } else {
@@ -246,10 +246,10 @@ function fillVideos(res) {
                 `<div class="d-flex w-25 flex-column ms-4">
                     <img style="object-fit: cover;" height="150px" width="100%"
                         src="https://img.youtube.com/vi/${content}/mqdefault.jpg" />
-                    <p class="fw-bolder fs-5 text mt-2"
+                    <a href="/video-view/${res.data.videos[i]._id}"  class="fw-bolder fs-5 text mt-2"
                         style="font-family: 'Times New Roman', Times, serif; -webkit-line-clamp: 2; line-clamp: 2;">
                         ${res.data.videos[i].title}
-                    </p>
+                    </a>
                     <p class="mt-2"><i class="far fa-clock"></i><span class="ms-2">${extracTime(res.data.videos[i].time)}</span></p>
                 </div>`)
         }

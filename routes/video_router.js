@@ -8,6 +8,8 @@ require('../middlewares/passport')
 const VideoController = require('../controller/VideoController');
 
 router
+    .get('/get-video-for-video-page', VideoController.getAllVideoForWatchVideoPage)
+    .put('/increase-view', VideoController.creaseView)
     .get('/get-all-video', VideoController.getAllVideo)
     .put('/hide-or-show', passport.authenticate(Constraint.JWT, { session: false }), VideoController.showOrHideVideo)
     .get('/my-videos', passport.authenticate(Constraint.JWT, { session: false }), VideoController.myVideo)

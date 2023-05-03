@@ -13,9 +13,28 @@ const VideoController = {
             let videos;
             let totalItem;
 
-
             totalItem = await Video.count({active: true, state: 1, field: field})
             videos = await Video.find({active: true, state: 1, field: field}).sort({ time: -1 }).skip(skip).limit(per_page)
+
+            return res.json({ success: true, message: null, data: { totalItem, videos } })
+        } catch (e) {
+            return res.json({ success: false, message: e.message, data: null })
+        }
+    },
+
+    getAllVideoForWatchVideoPage: async (req, res) => {
+        try {
+            let { page, per_page } = req.query
+            if (per_page == null) {
+                per_page = 10
+            }
+
+            const skip = page * per_page
+            let videos;
+            let totalItem;
+
+            totalItem = await Video.count({active: true, state: 1})
+            videos = await Video.find({active: true, state: 1}).sort({ time: -1 }).skip(skip).limit(per_page)
 
             return res.json({ success: true, message: null, data: { totalItem, videos } })
         } catch (e) {
@@ -120,6 +139,7 @@ const VideoController = {
 
     getVideoById: async (req, res) => {
         try {
+            console.log("id = " + req.params.id)
             const video = await Video.findById(req.params.id).populate(['onwer'])
             return res.json({ success: true, message: null, data: video })
         } catch (e) {
@@ -139,6 +159,18 @@ const VideoController = {
                 })
             }
             return res.json({ success: true, message: null, data: null })
+        } catch (e) {
+            return res.json({ success: false, message: e.message, data: null })
+        }
+    },
+
+    creaseView: async (req, res) => {
+        try {
+            console.log(req.body)
+            const video = await Video.findById(req.body.videoId)
+            video.view = video.view + 1
+            await video.save()
+            return res.json({ success: true, message: null, data: video.view })
         } catch (e) {
             return res.json({ success: false, message: e.message, data: null })
         }

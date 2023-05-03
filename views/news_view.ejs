@@ -99,9 +99,9 @@
                         <div class="mt-4">
                             <h5>Ý Kiến (<span id="number-of-comment">0</span>)</h5>
                             <div class="d-flex flex-start my-3">
-                                <p class="border-bottom fw-bold" style="border: #ff6200; color: #ff6200;">Quan tâm nhất
+                                <p class="border-bottom fw-bold" id="interesting" onclick="getInterestingComment(event)" style="border: #ff6200; color: #ff6200;">Quan tâm nhất
                                 </p>
-                                <p class="ms-3 fw-bold" style="border-color: #232323;">Mới nhất</p>
+                                <p class="ms-3 fw-bold" id="new" onclick="getNewComment(event)">Mới nhất</p>
                             </div>
                             <div id="comment-list" class="mt-3">
 
@@ -497,6 +497,26 @@
                 }
             }
         })
+
+        function getInterestingComment() {
+            $('#interesting').css('color', '#ff6200')
+            $('#interesting').addClass('border-bottom')
+            $('#interesting').css('border', '#ff6200')
+            $('#new').css('color', '#232323')
+            $('#new').css('border', '#232323')
+            $('#new').removeClass('border-bottom')
+            displayComment("/comment/get-comment-to-show?getType=0&target=" + $('#news-id').val())
+        }
+
+        function getNewComment(event) {
+            $('#new').css('color', '#ff6200')
+            $('#new').css('border', '#ff6200')
+            $('#new').addClass('border-bottom')
+            $('#interesting').removeClass('border-bottom')
+            $('#interesting').css('color', '#232323')
+            $('#interesting').css('border', '#232323')
+            displayComment("/comment/get-comment-to-show?getType=1&target=" + $('#news-id').val())
+        }
 
 
         function sendComment(targetType) {

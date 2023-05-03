@@ -72,11 +72,6 @@ const UserController = {
             const news_id = req.body.newsId
             const user = req.user
             const seenNews = user.seen_news
-            if (seenNews) {
-
-            } else {
-                seenNews = []
-            }
             const newSeenNews = moveElementToTop(seenNews, news_id)
             user.seen_news = newSeenNews
             await user.save()
@@ -84,14 +79,6 @@ const UserController = {
         } catch (e) {
             return res.json({ success: false, message: e.message, data: null })
         }
-    },
-
-    getLikedNews: async (req, res) => {
-
-    },
-
-    pushLikedNews: async (req, res) => {
-
     },
 
     pushLikedComment: async (userId, commenId) => {
@@ -196,6 +183,52 @@ const UserController = {
             return res.json({ success: true, message: null, data: result})
         } else {
             return res.json({ success: true, message: null, data: user.saved_news })
+        }
+    },
+
+    savedVideo : async (req, res) => {
+        const user = req.user
+        console.log(req.body)
+        if (req.body.saved == 'true') {
+            const index = user.saved_video.indexOf(req.body.video_id)
+            if (index !== -1) {
+                user.saved_video.splice(index, 1)
+            }
+            user.saved_video.unshift(req.body.video_id)
+            await user.save()
+            return res.json({ success: true, message: null, data: true })
+        } else {
+            const index = user.saved_video.indexOf(req.body.video_id)
+            if (index !== -1) {
+                user.saved_video.splice(index, 1)
+            }
+            await user.save()
+            return res.json({ success: true, message: null, data: false })
+        }
+    },
+
+    getSavedVideo: async (req, res) => {
+        const user = req.user
+        if (req.query.video_id) {
+            const result = user.saved_video.includes(req.query.video_id)
+            return res.json({ success: true, message: null, data: result})
+        } else {
+            return res.json({ success: true, message: null, data: user.saved_video })
+        }
+    },
+
+    seenVideo: async (req, res) => {
+        try {
+            console.log(req.body)
+            const videoId = req.body.videoId
+            const user = req.user
+            const seenVideo = user.seen_video
+            const newSeenVideo = moveElementToTop(seenVideo, videoId)
+            user.seen_video = newSeenVideo
+            await user.save()
+            return res.json({ success: true, message: null, data: null })
+        } catch (e) {
+            return res.json({ success: false, message: e.message, data: null })
         }
     }
 }

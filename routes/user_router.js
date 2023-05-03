@@ -8,6 +8,9 @@ const UserController = require('../controller/UserController')
 const { Constraint } = require('../utlity')
 
 router
+    .put('/seen-video', passport.authenticate(Constraint.JWT, { session: false }), UserController.seenVideo)
+    .get('/saved-video', passport.authenticate(Constraint.JWT, { session: false }), UserController.getSavedVideo)
+    .put('/saved-video', passport.authenticate(Constraint.JWT, { session: false }), UserController.savedVideo)
     .get('/user-roll', passport.authenticate(Constraint.JWT, { session: false }), UserController.getRoll)
     .get('/user-data', passport.authenticate(Constraint.JWT, { session: false }), UserController.getUserData)
     .put('/updateInfo', passport.authenticate(Constraint.JWT, { session: false }), UserController.updateInfo)

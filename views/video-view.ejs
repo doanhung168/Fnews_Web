@@ -17,6 +17,10 @@
             -webkit-box-orient: vertical;
             text-overflow: ellipsis;
         }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
     </style>
 </head>
 
@@ -32,7 +36,7 @@
                             style="border-color: rgb(17, 17, 17);">
                             <p id="time">Thứ 7, 13/4/2023</p>
                             <div class="d-flex flex-grow-1 justify-content-end  me-5">
-                                <a href="#" class="text-dark"><i class="fa-solid fa-arrows-rotate"></i><span
+                                <a href="#" onclick="refreshData()" class="text-dark"><i class="fa-solid fa-arrows-rotate"></i><span
                                         class="ms-2">Làm mới</span></a>
                             </div>
                         </div>
@@ -62,23 +66,21 @@
             </div>
         </div>
 
-        <div class="d-flex my-5 overflow-auto" >
-            <div id="main-video" data-video-id="<%=id%>" class="w-75 m-auto" style="height: 550px;">
-                <iframe class="video-content m-auto" style="object-fit: cover;" width="100%" height="100%"
-                    src="https://www.youtube.com/embed/dSjaplLpRXQ" frameborder="0" allowfullscreen>
-                </iframe>
-                <p class="main-video-title"></p>
-                <div class="action d-flex align-items-center mt-3">
-                    <p class="me-5">Lượt xem: <span id="news-views">0</span></p>
-                    <i style="cursor: pointer;" class="fa-regular fa-share-from-square me-4"
-                        id="news-share-action" onclick="getShareLink(this)"></i>
-                    <i style="cursor: pointer;" class="fa-regular fa-comment me-4" id="news-comment-action"
-                        onclick="commentAction()"></i>
-                    <i style="cursor: pointer;" class="fa-regular fa-bookmark me-4" id="news-saved-action"
-                        data-saved-news="0" onclick="saveNews(this)"></i>
+        <div class="d-flex flex-column overflow-auto mt-5">
+            <div id="main-video" data-video-id="<%=id%>"
+                class="w-75 mx-auto mb-5 d-flex flex-column justify-content-center" style="height: 550px;">
+                <input id="video-id" type="hidden" value="<%=id%>">
+                <div id="main-video-content" class="mx-auto"></div>
+                <b id="main-video-title" class="mt-3 mx-auto" style="width: 80%;"></b>
+                <div class="action d-flex align-items-center mt-3 mx-auto" style="width: 80%;">
+                    <p class="me-5">Lượt xem: <span id="video-view">0</span></p>
+                    <i style="cursor: pointer;" class="fa-regular fa-share-from-square me-4" id="news-share-action"
+                        onclick="getShareLink(this)"></i>
+                    <i style="cursor: pointer;" class="fa-regular fa-bookmark me-4" id="video-saved-action"
+                        data-saved-video="0" onclick="savedVideo(this)"></i>
                 </div>
             </div>
-            <div id="more-video my-5">
+            <div id="more-video">
 
             </div>
         </div>
@@ -143,6 +145,8 @@
 
     <script src="/javascripts/jquery.js"></script>
     <script src="/bootstrap-5/js/bootstrap.min.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+
 
     <script>
         function getTime() {
@@ -281,18 +285,58 @@
             }
         }
 
-        function getMainVideo() {
-            
+        let videoMap = new Map();
+
+        function onYouTubeIframeAPIReady() {
+            getMainVideo()
         }
 
-        function increaseViewOfVideo() {
+
+        function getMainVideo() {
             $.ajax({
-                url: '/news/increase-views',
-                type: 'put',
-                data: { newsId: $('#news-id').val() },
+                url: '/video/' + $('#video-id').val(),
+                type: 'get',
                 success: (data) => {
                     if (data.success) {
-                        $('#news-views').text(data.data)
+                        const video = data.data
+                        const content = video.content.split('/')[3]
+                        $('#main-video-title').text(video.title)
+                        $('#video-view').text(video.view)
+
+                        // youtube controller
+                        const player = new YT.Player('main-video-content', {
+                            height: '100%',
+                            width: '80%',
+                            videoId: content,
+                            playerVars: {
+                                'mute': 1,
+                                'autoplay': 1,
+                                'origin': 'http://localhost:8100'
+                            },
+                            events: {
+                                'onReady': (event) => {
+                                    videoMap.get(video._id).played = false
+                                    console.log("state " + videoMap.get(video._id).played)
+                                },
+                                'onStateChange': (event) => {
+                                    if (event.data == YT.PlayerState.PLAYING) {
+                                        onlyVideoPlaying(video._id)
+                                        if (videoMap.get(video._id).played == false) {
+                                            videoMap.get(video._id).played = true
+                                            setTimeout(setSeenVideos(videoMap.get(video._id).id), 1000)
+                                            setTimeout(increaseViewOfVideo(videoMap.get(video._id).id, 1000))
+                                            console.log("state " + videoMap.get(video._id).played)
+                                        }
+                                    } else if (event.data == YT.PlayerState.ENDED) {
+                                        videoMap.get(video._id).played = false
+                                        console.log("state " + videoMap.get(video._id).played)
+                                        videoMap.get(video._id).player.playVideo()
+                                    }
+                                }
+                            }
+                        });
+
+                        videoMap.set(video._id, { id: video._id, player: player, played: false })
                     } else {
                         console.log(data.message)
                     }
@@ -300,17 +344,137 @@
             })
         }
 
-        function setSeenVideos() {
+
+
+        let savedVideoList
+
+        $.ajax({
+            url: '/user/saved-video',
+            type: 'get',
+            beforeSend: function (request) {
+                request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
+            },
+            success: (data) => {
+                if (data.success) {
+                    savedVideoList = data.data
+                    console.log(savedVideoList)
+                    getMoreVideo()
+                }
+            },
+            error: (req, sts, err) => {
+                console.log(err)
+            }
+        })
+
+        function getMoreVideo() {
+            var page = 0
+            $('#more-video').empty()
             $.ajax({
-                url: '/user/seen-news',
+                url: `/video/get-video-for-video-page?page=${page}&per_page=5`,
+                type: 'get',
+                success: (data) => {
+                    if (data.success) {
+                        data.data.videos.forEach(element => {
+                            if (element._id != $('#video-id').val()) {
+                                const content = element.content.split('/')[3]
+                                $('#more-video').append(
+                                    `<div id="video-${element._id}" data-video-id="${element._id}" class="w-75 mb-5 mx-auto d-flex flex-column"
+                                        style="height: 550px;">
+                                        <div id="video-content-${element._id}" class="mx-auto"></div>
+                                        <b id="video-title" class="mt-3 mx-auto" style="width: 80%;">${element.title}</b>
+                                        <div class="action d-flex align-items-center mt-3 mx-auto" style="width: 80%;">
+                                            <p class="me-5">Lượt xem: <span id="video-view">${element.view}</span></p>
+                                            <i style="cursor: pointer;" class="fa-regular fa-share-from-square me-4" id="news-share-action"
+                                                onclick="getShareLink2(this)"></i>
+                                            <i style="cursor: pointer;${savedVideoList.includes(element._id) ? 'color: #e67a00;' : ''}"
+                                                class="${savedVideoList.includes(element._id) ? 'fa-solid' : 'fa-regular'} fa-bookmark me-4"
+                                                id="video-saved-action" data-saved-video="${savedVideoList.includes(element._id) ? 1 : 0}"
+                                                onclick="savedVideo2(this)"></i>
+                                        </div>
+                                    </div>`
+
+                                )
+
+                                const videoView = document.getElementById(`video-${element._id}`).querySelector('.action').querySelector('#video-view')
+
+                                // youtube controller
+                                const player = new YT.Player(`video-content-${element._id}`, {
+                                    height: '100%',
+                                    width: '80%',
+                                    videoId: content,
+                                    playerVars: {
+                                        'origin': 'http://localhost:8100'
+                                    },
+                                    events: {
+                                        'onReady': (event) => {
+                                            videoMap.get(element._id).played = false
+                                            console.log("state " + videoMap.get(element._id).played)
+                                        },
+                                        'onStateChange': (event) => {
+                                            if (event.data == YT.PlayerState.PLAYING) {
+                                                onlyVideoPlaying(element._id)
+                                                if (videoMap.get(element._id).played == false) {
+                                                    videoMap.get(element._id).played = true
+                                                    setTimeout(setSeenVideos(videoMap.get(element._id).id), 1000)
+                                                    setTimeout(increaseViewOfVideo(videoMap.get(element._id).id, videoView), 1000)
+                                                    console.log("state " + videoMap.get(element._id).played)
+                                                }
+                                            } else if (event.data == YT.PlayerState.ENDED) {
+                                                videoMap.get(element._id).played = false
+                                                console.log("state " + videoMap.get(element._id).played)
+                                                videoMap.get(element._id).player.playVideo()
+                                            }
+                                        }
+                                    }
+                                });
+
+                                videoMap.set(element._id, { id: element._id, player: player, played: false })
+                            }
+                        });
+
+
+
+
+                    }
+                }
+            })
+        }
+
+        function onlyVideoPlaying(ignoreId) {
+            videoMap.forEach((value, key) => {
+                if (value.id != ignoreId) {
+                    value.player.stopVideo()
+                }
+            })
+        }
+
+        function increaseViewOfVideo(id, videoView) {
+            $.ajax({
+                url: '/video/increase-view',
                 type: 'put',
-                data: { newsId: $('#news-id').val() },
+                data: { videoId: id },
+                success: (data) => {
+                    if (data.success) {
+                        $(videoView).text(data.data)
+                    } else {
+                        console.log(data.message)
+                    }
+                }
+            })
+        }
+
+        function setSeenVideos(id) {
+            console.log('set ' + id)
+            $.ajax({
+                url: '/user/seen-video',
+                type: 'put',
+                data: { videoId: id },
                 beforeSend: function (request) {
                     request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
                 },
                 success: (data) => {
                     if (data.success) {
-                        console.log("update success")
+                        console.log('update ' + data.data)
                     } else {
                         console.log(data.message)
                     }
@@ -318,30 +482,22 @@
             })
         }
 
-        // let intervalID1 = setTimeout(setSeenNews, 1000);
-        // let intervalID2 = setTimeout(increaseView, 5000);
-
-        window.addEventListener('beforeunload', function (e) {
-            clearInterval(intervalID1)
-            clearInterval(intervalID2)
-        });
-
 
         function getSavedVideo() {
-            const id = $('#news-id').val()
+            const id = $('#video-id').val()
             $.ajax({
-                url: '/user/saved-news?news_id=' + id,
+                url: '/user/saved-video?video_id=' + id,
                 type: 'get',
                 beforeSend: function (request) {
                     request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
                 },
                 success: (data) => {
-                    console.log("get saved news: " + data.data)
+                    console.log("get saved video: " + data.data)
                     if (data.success) {
                         if (data.data == true) {
-                            $('#news-saved-action').removeClass('fa-regular').addClass('fa-solid')
-                            $('#news-saved-action').css('color', '#e67a00')
-                            $('#news-saved-action').attr('data-saved-news', 1)
+                            $('#video-saved-action').removeClass('fa-regular').addClass('fa-solid')
+                            $('#video-saved-action').css('color', '#e67a00')
+                            $('#video-saved-action').attr('data-saved-video', 1)
                         }
                     }
                 },
@@ -351,27 +507,60 @@
             })
         }
 
+        getSavedVideo()
+
+
+
+
         function savedVideo(event) {
-            const saved = $(event).attr('data-saved-news') == 1
+            const saved = $(event).attr('data-saved-video') == 1
             console.log('input saved news: ' + !saved)
             $.ajax({
-                url: '/user/saved-news',
+                url: '/user/saved-video',
                 type: 'put',
-                data: { saved: !saved, news_id: $('#news-id').val() },
+                data: { saved: !saved, video_id: $('#video-id').val() },
                 beforeSend: function (request) {
                     request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
                 },
                 success: (data) => {
-                    console.log('saved news: ' + data.data)
+                    console.log('saved video: ' + data.data)
                     if (data.success) {
                         if (data.data == true) {
-                            $('#news-saved-action').removeClass('fa-regular').addClass('fa-solid')
-                            $('#news-saved-action').css('color', '#e67a00')
-                            $('#news-saved-action').attr('data-saved-news', 1)
+                            $('#video-saved-action').removeClass('fa-regular').addClass('fa-solid')
+                            $('#video-saved-action').css('color', '#e67a00')
+                            $('#video-saved-action').attr('data-saved-video', 1)
                         } else {
-                            $('#news-saved-action').addClass('fa-regular').removeClass('fa-solid')
-                            $('#news-saved-action').css('color', '')
-                            $('#news-saved-action').attr('data-saved-news', 0)
+                            $('#video-saved-action').addClass('fa-regular').removeClass('fa-solid')
+                            $('#video-saved-action').css('color', '')
+                            $('#video-saved-action').attr('data-saved-video', 0)
+                        }
+                    }
+                }
+            })
+        }
+
+        function savedVideo2(event) {
+            const saved = $(event).attr('data-saved-video') == 1
+            const video_id = event.parentElement.parentElement.getAttribute('data-video-id')
+            console.log('input saved news: ' + !saved + ' video id: ' + video_id)
+            $.ajax({
+                url: '/user/saved-video',
+                type: 'put',
+                data: { saved: !saved, video_id: video_id },
+                beforeSend: function (request) {
+                    request.setRequestHeader("Authorization", "Bearer " + getCookie("Authorization"));
+                },
+                success: (data) => {
+                    console.log('saved video: ' + data.data)
+                    if (data.success) {
+                        if (data.data == true) {
+                            $(event).removeClass('fa-regular').addClass('fa-solid')
+                            $(event).css('color', '#e67a00')
+                            $(event).attr('data-saved-video', 1)
+                        } else {
+                            $(event).addClass('fa-regular').removeClass('fa-solid')
+                            $(event).css('color', '')
+                            $(event).attr('data-saved-video', 0)
                         }
                     }
                 }
@@ -386,7 +575,7 @@
             navigator.permissions.query({ name: 'clipboard-write' }).then(result => {
                 if (result.state === 'granted' || result.state === 'prompt') {
                     // Lấy thông tin cần sao chép
-                    const textToCopy = 'http://localhost:3000/news-view/' + $('#news-id').val();
+                    const textToCopy = 'http://localhost:3000/video-view/' + $('#video-id').val();
 
                     // Sao chép thông tin vào bộ nhớ đệm
                     navigator.clipboard.writeText(textToCopy).then(() => {
@@ -398,8 +587,34 @@
             });
         }
 
-    </script>
+        function getShareLink2(event) {
+            $(event).css('color', '#e67a00')
+            setTimeout(function () {
+                $(event).css('color', '')
+            }, 500);
+            navigator.permissions.query({ name: 'clipboard-write' }).then(result => {
+                if (result.state === 'granted' || result.state === 'prompt') {
+                    // Lấy thông tin cần sao chép
+                    const video_id = event.parentElement.parentElement.getAttribute('data-video-id')
+                    const textToCopy = 'http://localhost:3000/video-view/' + video_id;
 
+                    // Sao chép thông tin vào bộ nhớ đệm
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        console.log('Đã sao chép nội dung vào bộ nhớ đệm');
+                    }).catch(error => {
+                        console.error('Lỗi khi sao chép nội dung vào bộ nhớ đệm:', error);
+                    });
+                }
+            });
+        }
+
+        function refreshData() {
+            videoMap = new Map()
+            onYouTubeIframeAPIReady()
+            getMoreVideo()
+        }
+
+    </script>
 
 </body>
 
